@@ -24,7 +24,7 @@ Model::Model(std::string name, const std::filesystem::path& path_main, const std
         HeightMap_Load(path_main);        
     }
 
-    GLuint texture_id = TextureInit(path_tex.string().c_str());
+    GLuint texture_id = textureInit(path_tex.string().c_str());
     mesh = Mesh(GL_TRIANGLES, mesh_vertices, mesh_vertex_indices, texture_id);
 }
 
