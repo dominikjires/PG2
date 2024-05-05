@@ -1,15 +1,15 @@
+// NEŠAHAT !!!
 #pragma once
-
-#ifndef TEXTURE_HPP
-#define TEXTURE_HPP
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include <opencv2\opencv.hpp>
 #include <GL/glew.h>
 
 // generate GL texture from image file
-GLuint TextureInit(const char* filepath);
+GLuint textureInit(const char* filepath);
 
 // generate GL texture from OpenCV image
-GLuint TextureGen(cv::Mat& image);
+GLuint tex_gen(cv::Mat& image);
 
 #endif
