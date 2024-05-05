@@ -1,3 +1,4 @@
+// NEŠAHAT
 #pragma once
 
 #include <glm/glm.hpp>
@@ -8,14 +9,15 @@
 class ShaderProgram {
 public:
 	// you can add more constructors for pipeline with GS, TS etc.
-	ShaderProgram() = default; // does nothing (tell the compiler to do what it would have if we didn't define a ctor)
+	ShaderProgram(void) = default; // does nothing
 	ShaderProgram(const std::filesystem::path& VS_file, const std::filesystem::path& FS_file); // load, compile, and link shader
 
 	void Activate();
 	void Deactivate();
 	void Clear();
 
-	// set uniform according to name :: https://docs.gl/gl4/glUniform
+	// set uniform according to name
+	// https://docs.gl/gl4/glUniform
 	void SetUniform(const std::string& name, const float val);
 	void SetUniform(const std::string& name, const int val);
 	void SetUniform(const std::string& name, const glm::vec3 val);
