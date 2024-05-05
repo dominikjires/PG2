@@ -1,24 +1,24 @@
+// NEŠAHAT!!!
 #include <opencv2\opencv.hpp>
-
 #include "texture.hpp"
 
-#define print(x) //std::cout << x << "\n"
-
-GLuint TextureInit(const char* filepath)
+GLuint textureInit(const char* filepath)
 {
 	cv::Mat image = cv::imread(filepath, cv::IMREAD_UNCHANGED);
-	if (image.empty()) {
-		std::cerr << "TextureInit: No texture " << filepath << "\n";
+	if (image.empty())
+	{
+		std::cerr << "no texture: " << filepath << std::endl;
 		exit(1);
 	}
-	print("TextureInit: Started generating texture with TextureGen(" << filepath << "):\n");
-	return TextureGen(image);
+	GLuint texture = tex_gen(image);
+
+	return texture;
 }
 
-GLuint TextureGen(cv::Mat& image)
+GLuint tex_gen(cv::Mat& image)
 {
 	if (image.empty()) {
-		throw std::exception("TextureGen: Image empty(?)\n");
+		throw std::exception("Image empty?\n");
 	}
 
 	// select proper format for image source and destination
@@ -26,7 +26,7 @@ GLuint TextureGen(cv::Mat& image)
 	GLenum img_format;
 
 	if (!GLEW_ARB_texture_compression) {
-		throw std::exception("TextureGen: Compressed textures not supported(?)\n");
+		throw std::exception("Compressed textures not supported??\n");
 	}
 
 	switch (image.channels()) {
@@ -44,8 +44,9 @@ GLuint TextureGen(cv::Mat& image)
 		img_format = GL_BGRA;
 		break;
 	default:
-		throw std::exception("TextureGen: Unsupported number of channels\n");
+		throw std::exception("Unsupported # of channels\n");
 	}
+	bool transparent = (image.channels() == 4);
 
 	// generate texture name
 	GLuint texture;
@@ -57,10 +58,11 @@ GLuint TextureGen(cv::Mat& image)
 	// get list of supported formats
 	GLint num_compressed_format;
 	glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &num_compressed_format);
-	if (num_compressed_format > 0) {
+	if (num_compressed_format > 0)
+	{
 		GLint compressed, internalformat, compressed_size;
 
-		print("TextureGen: COMPRESSION supported; total available formats: " << num_compressed_format << "\n");
+		std::cout << "COMPRESSION supported, tot. available formats: " << num_compressed_format << std::endl;
 
 		// try to load compressed texture
 		//glHint(GL_TEXTURE_COMPRESSION_HINT, GL_FASTEST);
@@ -71,14 +73,15 @@ GLuint TextureGen(cv::Mat& image)
 		// Is it now really compressed? Did we succeed?
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &compressed);
 		// if the compression has been successful
-		if (compressed == GL_TRUE) {
+		if (compressed == GL_TRUE)
+		{
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalformat);
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &compressed_size);
-			print("TextureGen: ORIGINAL: " << image.total() * image.elemSize() << " COMPRESSED: " << compressed_size << " INTERNAL FORMAT: " << internalformat << "\n\n");
+			std::cout << "ORIGINAL: " << image.total() * image.elemSize() << " COMPRESSED: " << compressed_size << " INTERNAL FORMAT: " << internalformat << std::endl;
 		}
 	}
 	else {
-		throw std::exception("TextureGen: Compression supported, but no formats available?\n");
+		throw std::exception("Compression supported, but no formats available?\n");
 	}
 
 	//
