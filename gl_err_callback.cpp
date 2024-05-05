@@ -1,3 +1,4 @@
+// NEŠAHAT !!!
 #include <iostream>
 #include "gl_err_callback.hpp"
 
