@@ -24,7 +24,7 @@ AudioSlave::AudioSlave()
 	irrklang::ISoundSource* snd_glass = engine->addSoundSourceFromFile("resources/sfx/glass.mp3");
 	sounds.insert({ "snd_glass", snd_glass });
 	
-	irrklang::ISoundSource* snd_shoot = engine->addSoundSourceFromFile("resources/sfx/bow.ogg");
+	irrklang::ISoundSource* snd_shoot = engine->addSoundSourceFromFile("resources/sfx/bow.mp3");
 	snd_shoot->setDefaultVolume(0.45f);
 	sounds.insert({ "snd_shoot", snd_shoot });
 
