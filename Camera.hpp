@@ -1,4 +1,4 @@
-// NEŠAHAT
+// NEŠAHAT AŽ NA AUDIO
 #pragma once
 
 #include <GL/glew.h>
@@ -32,11 +32,8 @@ public:
     glm::mat4 GetViewMatrix();
     glm::vec3 ProcessInput(GLFWwindow* window, GLfloat deltaTime);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch = GL_TRUE);
-
     void ToggleSprint();
-
     void UpdateListenerPosition(AudioSlave& audio);
-
     bool sprint;
 private:
     glm::vec3 up_global;

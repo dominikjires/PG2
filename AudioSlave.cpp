@@ -50,7 +50,7 @@ void AudioSlave::UpdateListenerPosition(glm::vec3 position, glm::vec3 front, glm
 
 void AudioSlave::PlayMusic3D()
 {
-	music = engine->play3D("resources/music/HongKong.it", irrklang::vec3df(0, 0, 0), true, true);
+	music = engine->play3D("resources/music/despacito.mp3", irrklang::vec3df(0, 0, 0), true, true);
 	if (music) {
 		music->setMinDistance(1.0f);
 		music->setIsPaused(false);

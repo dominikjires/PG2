@@ -21,7 +21,7 @@ Model::Model(std::string name, const std::filesystem::path& path_main, const std
         LoadOBJFile(path_main);
     }
     else {
-        HeightMap_Load(path_main);        
+        HeightMap(path_main);        
     }
 
     GLuint texture_id = textureInit(path_tex.string().c_str());
@@ -221,7 +221,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     print_loading("#\n");
 }
 
-void Model::HeightMap_Load(const std::filesystem::path& file_name)
+void Model::HeightMap(const std::filesystem::path& file_name)
 {
     mesh_vertices.clear();
     mesh_vertex_indices.clear();
@@ -231,9 +231,12 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
 
     const unsigned int mesh_step_size = 10;
 
-    print("HeightMap: heightmap size: " << hmap.size << ", channels: " << hmap.channels());
+    std::cout << "Note: heightmap size:" << hmap.size << ", channels: " << hmap.channels() << std::endl;
 
-    if (hmap.channels() != 1) std::cerr << "HeightMap: [!] requested 1 channel, got: " << hmap.channels() << "\n";
+    if (hmap.channels() != 1)
+    {
+        std::cerr << "WARN: requested 1 channel, got: " << hmap.channels() << std::endl;
+    }
 
     // Create heightmap mesh from TRIANGLES in XZ plane, Y is UP (right hand rule)
     //

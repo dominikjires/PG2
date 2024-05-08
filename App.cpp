@@ -184,8 +184,8 @@ int App::Run(void)
 
             // Movement sound
             if ((camera_movement.x != 0 || camera_movement.z != 0) && is_grounded) {
-                if ((!camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
-                    || (camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
+                if ((!camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
+                    || (camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
                     audio.PlayWalk(); // Play step sound if grounded and walking and we didn't play the sound for the duration of delay (sprinting == shorter delay)
                     walk_last_played_timestamp = current_timestamp;
                 }

@@ -1,4 +1,4 @@
-// NEŠAHAT
+// NEŠAHAT AŽ NA 1 FUNKCI VIZ DOLE
 #include <iostream>
 
 #include <glm/ext/matrix_transform.hpp>
@@ -18,47 +18,53 @@ glm::mat4 Camera::GetViewMatrix() {
 
 glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
 {
+    // Initialize direction vector and zero vector
     glm::vec3 direction(0, 0, 0);
     glm::vec3 zero(0, 0, 0);
 
+    // Define horizontal and forward vectors based on camera orientation
     glm::vec3 horizontal(front.x, 0, front.z);
     glm::vec3 forward(right.x, 0, right.z);
 
+    // Check key presses for movement
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        direction += horizontal;
+        direction += horizontal; // Move forward
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        direction += -horizontal;
+        direction += -horizontal; // Move backward
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        direction += -forward;
+        direction += -forward; // Move left
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        direction += forward;
+        direction += forward; // Move right
     }
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        direction += up_global;
+        direction += up_global; // Move upward
     }
 
+    // Check if no movement input, set sprint to false
     if (direction == zero) {
         sprint = false;
     }
 
+    // Determine movement speed based on sprinting state
     float movement_speed = movement_speed_normal;
     if (sprint) {
         movement_speed = movement_speed_sprint;
     }
 
+    // If no movement input, return zero vector
     if (direction == zero) {
         return zero;
     }
-    else {
-        return glm::normalize(direction) * movement_speed * delta_time;
-    }
+
+    // Normalize direction vector and calculate movement distance
+    return glm::normalize(direction) * movement_speed * delta_time;
 }
 
 
@@ -84,6 +90,7 @@ void Camera::ToggleSprint() {
     sprint = !sprint;
 }
 
+//PØEDÌLAT
 void Camera::UpdateListenerPosition(AudioSlave& audio)
 {
     audio.UpdateListenerPosition(position, front, up_global);
