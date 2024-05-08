@@ -1,3 +1,4 @@
+// NEŠAHAT
 #pragma once
 
 #include <GL/glew.h>
@@ -15,30 +16,29 @@ public:
     glm::vec3 right;
     glm::vec3 up; // camera local UP vector
 
-    GLfloat yaw = 0.0f;
+    GLfloat yaw = -90.0f;
     GLfloat pitch = 0.0f;
     GLfloat roll = 0.0f;
 
     // Player options
-    const GLfloat movement_speed_normal = 3.0f;
-    const GLfloat movement_speed_sprint = 6.2f;
+    const GLfloat movement_speed_normal = 1.0f;
+    const GLfloat movement_speed_sprint = 5.0f;
     
     // Mouse options
-    const GLfloat mouse_sensitivity_horizontal = 0.18f;
-    const GLfloat mouse_sensitivity_vertical = 0.175f;
+    const GLfloat mouse_sensitivity_horizontal = 0.25f;
+    const GLfloat mouse_sensitivity_vertical = 0.25f;
 
     Camera(glm::vec3 position);
     glm::mat4 GetViewMatrix();
     glm::vec3 ProcessInput(GLFWwindow* window, GLfloat deltaTime);
-    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset);
+    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch = GL_TRUE);
 
     void ToggleSprint();
 
     void UpdateListenerPosition(AudioSlave& audio);
 
-    bool is_sprint_toggled;
+    bool sprint;
 private:
-    glm::vec3 world_up;
-
+    glm::vec3 up_global;
     void UpdateCameraVectors();
 };
