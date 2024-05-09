@@ -150,7 +150,7 @@
     <ClCompile Include="AppHeightmap.cpp" />
     <ClCompile Include="AppProjectiles.cpp" />
     <ClCompile Include="AppObjects.cpp" />
-    <ClCompile Include="AudioSlave.cpp" />
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="gl_err_callback.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -161,7 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
-    <ClInclude Include="AudioSlave.hpp" />
+    <ClInclude Include="Audio.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="gl_err_callback.hpp" />
     <ClInclude Include="Mesh.hpp" />

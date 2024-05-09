@@ -55,7 +55,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             break;
         }
     }
-    
+
     // Minecraft-like sprint
     if (action == GLFW_PRESS && (key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL)) {
         this_inst->camera.ToggleSprint();
@@ -64,7 +64,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));    
+    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     this_inst->FOV -= 10.0f * static_cast<float>(yoffset);      // Scrollwheel down == FOV++
     this_inst->FOV = std::clamp(this_inst->FOV, 70.0f, 160.0f); // Limit FOV to "reasonable" values
     this_inst->UpdateProjectionMatrix();

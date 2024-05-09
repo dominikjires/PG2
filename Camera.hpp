@@ -23,7 +23,7 @@ public:
     // Player options
     const GLfloat movement_speed_normal = 1.0f;
     const GLfloat movement_speed_sprint = 5.0f;
-    
+
     // Mouse options
     const GLfloat mouse_sensitivity_horizontal = 0.25f;
     const GLfloat mouse_sensitivity_vertical = 0.25f;

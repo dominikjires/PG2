@@ -10,7 +10,7 @@
 #define JUKEBOX_SPEED 2.0f
 
 Obj* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb)
-{	
+{
 	if (name.substr(0, 15) != "obj_projectile_") print("Loading " << name << ":"); // Print object name we're currently loading except projectiles
 
 	std::filesystem::path modelpath("./resources/objects/" + obj);
@@ -18,7 +18,7 @@ Obj* App::CreateModel(std::string name, std::string obj, std::string tex, bool i
 	auto model = new Obj(name, modelpath, texturepath, position, scale, rotation, false, use_aabb);
 
 	if (is_opaque) {
-		scene_opaque.insert({ name, model});
+		scene_opaque.insert({ name, model });
 	}
 	else {
 		scene_transparent.insert({ name, model });

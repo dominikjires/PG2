@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <string>
 
 #include "App.hpp"
@@ -38,7 +38,7 @@ void App::UpdateProjectiles(float delta_time)
 					print("PROJECTILE HIT " << hit_name);
 					hit = true;
 
-					// Projectile hit glass cube – destroy it & play sound
+					// Projectile hit glass cube ï¿½ destroy it & play sound
 					if (hit_name.substr(0, 15) == "obj_glass_cube_") {
 						if (!HIDE_CUBES_INSTEAD_DESTROY) {
 							// Remove cube from possible collisions vector
@@ -60,7 +60,7 @@ void App::UpdateProjectiles(float delta_time)
 						// Play broken glass audio
 						audio.Play3DOneShot("snd_glass", position);
 					}
-					// Projectile hit jukebox – on/off light+music
+					// Projectile hit jukebox ï¿½ on/off light+music
 					else if (hit_name == "obj_jukebox") {
 						is_jukebox_on = (is_jukebox_on + 1) % 2;
 						audio.UpdateMusicVolume(static_cast<float>(is_jukebox_on));
@@ -75,7 +75,7 @@ void App::UpdateProjectiles(float delta_time)
 				}
 			}
 
-			// - Heightmap collision check – if hits ground hide and play sound
+			// - Heightmap collision check ï¿½ if hits ground hide and play sound
 			if (position.y < GetHeightmapY(position.x, position.z)) {
 				print("PROJECTILE HIT ground");
 				hit = true;

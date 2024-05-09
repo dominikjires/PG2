@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -21,7 +21,7 @@ Obj::Obj(std::string name, const std::filesystem::path& path_main, const std::fi
         LoadObj(path_main);
     }
     else {
-        HeightMap(path_main);        
+        HeightMap(path_main);
     }
 
     GLuint texture_id = textureInit(path_tex.string().c_str());
@@ -100,13 +100,13 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
                     uvIndices.insert(uvIndices.end(), { indices_temp[3], indices_temp[4], indices_temp[5] });
                 }
                 else if (n == 6) {
-    
+
                     if (line.find("//") != std::string::npos) {
                         unsigned int indices_temp[6]{};
                         (void)sscanf_s(line.c_str(), "f %d//%d %d//%d %d//%d", &indices_temp[0], &indices_temp[3], &indices_temp[1], &indices_temp[4], &indices_temp[2], &indices_temp[5]);
                         vertexIndices.insert(vertexIndices.end(), { indices_temp[0], indices_temp[1], indices_temp[2] });
                         normalIndices.insert(normalIndices.end(), { indices_temp[3], indices_temp[4], indices_temp[5] });
-                    }                
+                    }
                     else {
                         unsigned int indices_temp[9]{};
                         (void)sscanf_s(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &indices_temp[0], &indices_temp[3], &indices_temp[6], &indices_temp[1], &indices_temp[4], &indices_temp[7], &indices_temp[2], &indices_temp[5], &indices_temp[8]);
@@ -179,7 +179,7 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
     }
     print_loading("#");
 
-    // RETARDED DRAW ™ 2.0
+    // RETARDED DRAW ï¿½ 2.0
     // - [3] Indirect -> direct
     std::vector<glm::vec3> vertices_direct;
     std::vector<glm::vec2> texture_coordinates_direct;
@@ -220,7 +220,7 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
     out_uvs.clear();
     cv::Mat hmap = cv::imread(file_name.u8string(), cv::IMREAD_GRAYSCALE);
     const unsigned int mesh_step_size = 10;
-        glm::vec3 normalA{};
+    glm::vec3 normalA{};
     glm::vec3 normalB{};
     glm::vec3 normal{};
     unsigned int indices_counter = 0;
@@ -251,22 +251,22 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
 
     for (unsigned int x_coord = 0; x_coord < (hmap.cols - mesh_step_size); x_coord += mesh_step_size) {
         for (unsigned int z_coord = 0; z_coord < (hmap.rows - mesh_step_size); z_coord += mesh_step_size) {
-			// Get The (X, Y, Z) Value For The Bottom Left Vertex = 0
-			glm::vec3 p0(x_coord, hmap.at<uchar>(cv::Point(x_coord, z_coord)), z_coord);
-			// Get The (X, Y, Z) Value For The Bottom Right Vertex = 1
-			glm::vec3 p1(x_coord + mesh_step_size, hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)), z_coord);
-			// Get The (X, Y, Z) Value For The Top Right Vertex = 2
-			glm::vec3 p2(x_coord + mesh_step_size, hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)), z_coord + mesh_step_size);
-			// Get The (X, Y, Z) Value For The Top Left Vertex = 3
-			glm::vec3 p3(x_coord, hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)), z_coord + mesh_step_size);
+            // Get The (X, Y, Z) Value For The Bottom Left Vertex = 0
+            glm::vec3 p0(x_coord, hmap.at<uchar>(cv::Point(x_coord, z_coord)), z_coord);
+            // Get The (X, Y, Z) Value For The Bottom Right Vertex = 1
+            glm::vec3 p1(x_coord + mesh_step_size, hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)), z_coord);
+            // Get The (X, Y, Z) Value For The Top Right Vertex = 2
+            glm::vec3 p2(x_coord + mesh_step_size, hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)), z_coord + mesh_step_size);
+            // Get The (X, Y, Z) Value For The Top Left Vertex = 3
+            glm::vec3 p3(x_coord, hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)), z_coord + mesh_step_size);
 
-			// Get max normalized height for tile, set texture accordingly
-			// Grayscale image returns 0..256, normalize to 0.0f..1.0f by dividing by 256 (255 ?)
-			float max_h = std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord)) / 255.0f,
-				std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)) / 255.0f,
-					std::max(hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)) / 255.0f,
-						hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)) / 255.0f
-					)));
+            // Get max normalized height for tile, set texture accordingly
+            // Grayscale image returns 0..256, normalize to 0.0f..1.0f by dividing by 256 (255 ?)
+            float max_h = std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord)) / 255.0f,
+                std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)) / 255.0f,
+                    std::max(hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)) / 255.0f,
+                        hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)) / 255.0f
+                    )));
 
             // Get texture coords in vertices, bottom left of geometry == bottom left of texture
             // Get texture coords in vertices, bottom left of geometry == bottom left of texture
@@ -276,12 +276,12 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
             glm::vec2 tc2 = texture_coords + glm::vec2(1.0f / 16, 1.0f / 16);    // add offset for top right corner
             glm::vec2 tc3 = texture_coords + glm::vec2(0.0f, 1.0f / 16);         // add offset for bottom left corner
 
-            // RETARDED HEIGHT MAP ™ 2.0
+            // RETARDED HEIGHT MAP ï¿½ 2.0
             // - calculate normal vector            
             normalA = glm::normalize(glm::cross(p1 - p0, p2 - p0));
             normalB = glm::normalize(glm::cross(p2 - p0, p3 - p0));
             normal = (normalA + normalB) / 2.0f;
-            
+
             // - place vertices and ST to mesh
             out_vertices.emplace_back(Vertex{ p0, -normal, tc0 });
             out_vertices.emplace_back(Vertex{ p1, -normal, tc1 });
@@ -314,7 +314,7 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
         pair = { static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z) };
         vertex.normal = glm::normalize(normal_sums[pair]); // no need to divide by four, we can just normalize
 
-        _heights[{vertex.position.x * HEGHTMAP_SCALE, vertex.position.z * HEGHTMAP_SCALE}] = vertex.position.y; // for heightmap collision
+        _heights[{vertex.position.x* HEGHTMAP_SCALE, vertex.position.z* HEGHTMAP_SCALE}] = vertex.position.y; // for heightmap collision
     }
 
     print("HeightMap: height map vertices: " << out_vertices.size());

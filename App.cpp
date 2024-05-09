@@ -1,11 +1,11 @@
-// C++
+ï»¿// C++
 #include <iostream>
 #include <chrono>
 #include <stack>
 #include <random>
 #include <sstream>
 
-// OpenCV – GL independent
+// OpenCV ï¿½ GL independent
 #include <opencv2/opencv.hpp>
 
 // OpenGL Extension Wrangler: allow all multiplatform GL functions
@@ -36,7 +36,7 @@ App::App()
 // App initialization, if returns true then run run()
 bool App::Init()
 {
-    try {        
+    try {
         // Set GLFW error callback
         glfwSetErrorCallback(error_callback);
 
@@ -50,7 +50,7 @@ bool App::Init()
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         // Set OpenGL profile
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
-        
+
         // Window is hidden until everything is initialized
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
@@ -112,7 +112,7 @@ bool App::Init()
 
         // Transparency blending function
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
         // First init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
 
@@ -178,7 +178,7 @@ int App::Run(void)
             // === After clearing the canvas ===
             float delta_time = static_cast<float>(current_timestamp - last_frame_time);
             last_frame_time = current_timestamp;
-            
+
             // Player movement
             camera_movement = camera.ProcessInput(window, delta_time);
             camera.position.x += camera_movement.x;
@@ -186,8 +186,8 @@ int App::Run(void)
 
             // Movement sound
             if ((camera_movement.x != 0 || camera_movement.z != 0) && is_grounded) {
-                if ((!camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
-                    || (camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
+                if ((!camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
+                    || (camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
                     audio.PlayWalk(); // Play step sound if grounded and walking and we didn't play the sound for the duration of delay (sprinting == shorter delay)
                     walk_last_played_timestamp = current_timestamp;
                 }
@@ -196,14 +196,14 @@ int App::Run(void)
                 walk_last_played_timestamp = current_timestamp; // Consistent delay for first step sound after movement starts
             }
 
-            // Mouselook – get cursor's offset from window center and the move it back to center
+            // Mouselook ï¿½ get cursor's offset from window center and the move it back to center
             if (is_mouselook_on) {
                 glfwGetCursorPos(window, &cursor_x, &cursor_y);
                 camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x), static_cast<GLfloat>(window_height / 2.0 - cursor_y));
                 glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
             }
             bool is_space_pressed = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
-            // Heightmap collision – for our X and Z get Y coordinate for ground level
+            // Heightmap collision ï¿½ for our X and Z get Y coordinate for ground level
             auto heightmap_y = GetHeightmapY(camera.position.x, camera.position.z);
             // Jetpack
             float min_hei = heightmap_y + PLAYER_HEIGHT;// Camera's smallest Y coordinate possible
@@ -233,13 +233,13 @@ int App::Run(void)
                     is_grounded = true;
                 }
                 else if (is_grounded && camera.position.y - min_hei > 1.0f) {
-                    is_grounded = false;                       
+                    is_grounded = false;
                 }
             }
             audio.UpdateFallVolume(falling_speed > 1.0f && !is_grounded);
 
             // Create View Matrix according to camera settings
-            glm::mat4 mx_view = camera.GetViewMatrix();            
+            glm::mat4 mx_view = camera.GetViewMatrix();
 
             // Update objects
 
@@ -298,7 +298,7 @@ int App::Run(void)
             my_shader.SetUniform("u_spotlight.linear", 0.07f);
             my_shader.SetUniform("u_spotlight.exponent", 0.017f);
             my_shader.SetUniform("u_spotlight.on", is_flashlight_on);
-            
+
             // Draw the scene
             // - Draw opaque objects
             for (auto& [key, value] : scene_opaque) {
@@ -330,13 +330,13 @@ int App::Run(void)
 
             // Poll for and process events
             glfwPollEvents();
-            
+
             // Time/FPS measure end
             auto fps_frame_end_timestamp = std::chrono::steady_clock::now();
             std::chrono::duration<double> fps_elapsed_seconds = fps_frame_end_timestamp - fps_frame_start_timestamp;
             fps_counter_seconds += fps_elapsed_seconds.count();
             fps_counter_frames++;
-            if (fps_counter_seconds >= 1) {                
+            if (fps_counter_seconds >= 1) {
                 FPS = fps_counter_frames;
                 fps_counter_seconds = 0;
                 fps_counter_frames = 0;
@@ -351,7 +351,7 @@ int App::Run(void)
         std::cerr << "App failed : " << e.what() << "\n";
         return EXIT_FAILURE;
     }
-    
+
     PrintGLInfo();
 
     std::cout << "Finished OK...\n";
@@ -393,7 +393,7 @@ void App::PrintGLInfo()
     std::cout << "GL Renderer:\t" << glGetString(GL_RENDERER) << "\n";
     std::cout << "GL Version:\t" << glGetString(GL_VERSION) << "\n";
     std::cout << "GL Shading ver:\t" << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n\n";
-    
+
     GLint profile;
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
     if (const auto errorCode = glGetError()) {

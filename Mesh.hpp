@@ -16,7 +16,7 @@ public:
     std::vector<GLuint> indices;
     GLuint texture_id{ 0 }; // texture id=0  means no texture
     GLenum primitive_type = GL_POINTS;
-;
+    ;
     Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLuint>& indices, GLuint texture_id);
     void Draw(ShaderProgram& shader, glm::mat4 mx_model);
     void Clear();

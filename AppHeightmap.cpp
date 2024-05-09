@@ -5,7 +5,7 @@
 //
 
 float App::GetHeightmapY(float position_x, float position_z) const
-{    
+{
     float hm_x_f = position_x + HEIGHTMAP_SHIFT;
     float hm_z_f = position_z + HEIGHTMAP_SHIFT;
     float hm_y_f = 0.0f;

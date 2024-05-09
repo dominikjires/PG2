@@ -33,7 +33,7 @@ private:
     bool is_vsync_on{};
     bool is_fullscreen_on = false;
     bool is_mouselook_on = true;
-    
+
     GLFWmonitor* monitor{};
     const GLFWvidmode* mode{};
     int window_xcor{};

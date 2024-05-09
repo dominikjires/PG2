@@ -17,9 +17,9 @@ public:
     Obj(std::string name, const std::filesystem::path& path_main, const std::filesystem::path& path_tex, glm::vec3 position, float scale, glm::vec4 init_rotation, bool is_height_map, bool use_aabb);
     void Draw(ShaderProgram& shader);
     void Clear();
-    
+
     // Transformations
-    glm::vec3 position{};    
+    glm::vec3 position{};
     float scale{};
     glm::vec4 rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f); // axes xyz + angle (deg)
 
