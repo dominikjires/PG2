@@ -1,50 +1,27 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
-
 #include "Miniball.hpp"
-
 #include "Obj.hpp"
 #include "Texture.hpp"
 
-#define print(x) //std::cout << x << "\n"
-#define print_loading(x) std::cout << x
 
 Obj::Obj(std::string name, const std::filesystem::path& path_main, const std::filesystem::path& path_tex, glm::vec3 position, float scale, glm::vec4 init_rotation, bool is_height_map, bool use_aabb) :
-    name(name),
+    name(std::move(name)),
     position(position),
     scale(scale),
     init_rotation(init_rotation),
     use_aabb(use_aabb)
 {
-    if (!is_height_map) {
+    if (!is_height_map)
         LoadObj(path_main);
-    }
-    else {
+    else
         HeightMap(path_main);
-    }
 
     GLuint texture_id = textureInit(path_tex.string().c_str());
     mesh = Mesh(GL_TRIANGLES, out_vertices, out_uvs, texture_id);
 }
 
-void Obj::Draw(ShaderProgram& shader)
-{
-    // Einheitsmatrix
-    mx_model = glm::identity<glm::mat4>();
-    // Move object
-    mx_model = glm::translate(mx_model, position);
-    // Scale object (scale in all three dimensions must be the same in this "engine")
-    mx_model = glm::scale(mx_model, glm::vec3(scale));
-    // Initial rotation (should be set only once when creating the Model)
-    init_rotation_axes = glm::vec3(init_rotation.x, init_rotation.y, init_rotation.z);
-    mx_model = glm::rotate(mx_model, glm::radians(init_rotation.w), init_rotation_axes);
-    // Additional rotation
-    rotation_axes = glm::vec3(rotation.x, rotation.y, rotation.z);
-    mx_model = glm::rotate(mx_model, glm::radians(rotation.w), rotation_axes);
-    // Draw
-    mesh.Draw(shader, mx_model);
-}
 
 void Obj::LoadObj(const std::filesystem::path& file_name)
 {
@@ -131,41 +108,43 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
             else {
                 line_success = false;
             }
-
-            if (!line_success && first_two_chars != "# ") {
-                print("LoadOBJFile: Ignoring line '" << line << "' in file '" << file_name << "'");
-            }
         }
     }
     file_reader.close();
 
-
-    // [2] Calculate collision sphere/box
-    // - Bounding sphere
+    // If not using AABB collision detection
     if (!use_aabb) {
-        int d = 3; // dimension
-        auto n = temp_vertices.size(); // number of points
-        float** ap = new float* [n];
+        // Dimension of points (x, y, z)
+        int d = 3;
+        // Number of vertices
+        auto n = temp_vertices.size();
+        // Vector to store coordinates of points
+        std::vector<std::vector<float>> ap(n, std::vector<float>(d));
+        // Extract x, y, z coordinates of each vertex and store them
         for (int i = 0; i < n; i++) {
-            float* p = new float[d];
-            p[0] = temp_vertices[i].x;
-            p[1] = temp_vertices[i].y;
-            p[2] = temp_vertices[i].z;
-            ap[i] = p;
+            ap[i][0] = temp_vertices[i].x;
+            ap[i][1] = temp_vertices[i].y;
+            ap[i][2] = temp_vertices[i].z;
         }
-        typedef float* const* PointIterator;
-        typedef const float* CoordIterator;
-        typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
-        MB mb(d, ap, ap + n);
+        // Define types for Miniball algorithm
+        typedef std::vector<float>::const_iterator CoordIterator;
+        typedef Miniball::Miniball <Miniball::CoordAccessor<std::vector<std::vector<float>>::const_iterator, CoordIterator>> MB;
+        // Compute bounding sphere using Miniball algorithm
+        MB mb(d, ap.begin(), ap.end());
+        // Get center of the bounding sphere
         const float* center = mb.center();
+        // Assign center coordinates to collision_bs_center
         for (int i = 0; i < d; ++i, ++center) collision_bs_center[i] = *center;
+        // Scale center and compute scaled radius
         collision_bs_center *= scale;
         collision_bs_radius = sqrt(mb.squared_radius()) * scale;
     }
-    // - AABB
+    // If using AABB collision detection
     else {
+        // Initialize AABB min and max points
         collision_aabb_min = temp_vertices[0];
         collision_aabb_max = temp_vertices[0];
+        // Find minimum and maximum coordinates for each axis
         for (const auto& point : temp_vertices) {
             if (point.x < collision_aabb_min.x) collision_aabb_min.x = point.x;
             if (point.y < collision_aabb_min.y) collision_aabb_min.y = point.y;
@@ -174,17 +153,17 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
             if (point.y > collision_aabb_max.y) collision_aabb_max.y = point.y;
             if (point.z > collision_aabb_max.z) collision_aabb_max.z = point.z;
         }
+        // Scale AABB coordinates
         collision_aabb_min *= scale;
         collision_aabb_max *= scale;
     }
-    print_loading("#");
 
-    // RETARDED DRAW � 2.0
-    // - [3] Indirect -> direct
+    // Initialize vectors to hold processed data
     std::vector<glm::vec3> vertices_direct;
     std::vector<glm::vec2> texture_coordinates_direct;
     std::vector<glm::vec3> vertex_normals_direct;
 
+    // Process vertex, texture coordinate, and normal data
     for (unsigned int u = 0; u < vertexIndices.size(); u++) {
         vertices_direct.push_back(temp_vertices[vertexIndices[u] - 1]);
     }
@@ -195,13 +174,11 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
         vertex_normals_direct.push_back(temp_normals[normalIndices[u] - 1]);
     }
 
-    ///* Uncomment these if you don't like to live dangerously
+    // Compute sizes for texture coordinates and normals
     auto n_direct_uvs = texture_coordinates_direct.size();
     auto n_direct_normals = vertex_normals_direct.size();
-    /**/
-    print_loading("#");
 
-    // - [4] vectors to Vertex vector
+    // Populate output vertex data
     for (unsigned int u = 0; u < vertices_direct.size(); u++) {
         Vertex vertex{};
         vertex.position = vertices_direct[u];
@@ -210,8 +187,34 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
         out_vertices.push_back(vertex);
         out_uvs.push_back(u);
     }
-    print("LoadOBJFile: Loaded OBJ file " << file_name << "\n");
-    print_loading("#\n");
+
+    // Print loaded file name
+    std::cout << "LoadObj: Loaded file: " << file_name << "\n";
+}
+
+void Obj::Draw(ShaderProgram& shader)
+{
+    // Initialize model matrix as identity matrix
+    mx_model = glm::mat4(1.0f);
+
+    // Apply translation
+    mx_model = glm::translate(mx_model, position);
+
+    // Apply scaling
+    mx_model = glm::scale(mx_model, glm::vec3(scale));
+
+    // Initialize rotation axis from initial rotation
+    glm::vec3 init_rotation_axes(init_rotation);
+
+    // Apply initial rotation
+    mx_model = glm::rotate(mx_model, glm::radians(init_rotation.w), init_rotation_axes);
+
+    // Apply current rotation
+    glm::vec3 rotation_axes(rotation);
+    mx_model = glm::rotate(mx_model, glm::radians(rotation.w), rotation_axes);
+
+    // Draw the object using the current model matrix
+    mesh.Draw(shader, mx_model);
 }
 
 void Obj::HeightMap(const std::filesystem::path& file_name)
@@ -219,10 +222,10 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
     out_vertices.clear();
     out_uvs.clear();
     cv::Mat hmap = cv::imread(file_name.u8string(), cv::IMREAD_GRAYSCALE);
-    const unsigned int mesh_step_size = 10;
-    glm::vec3 normalA{};
-    glm::vec3 normalB{};
-    glm::vec3 normal{};
+    const unsigned int mesh_step_size = 5;
+    glm::vec3 a{};
+    glm::vec3 b{};
+    glm::vec3 c{};
     unsigned int indices_counter = 0;
 
     std::map<std::pair<unsigned int, unsigned int>, glm::vec3> normal_sums;
@@ -276,48 +279,46 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
             glm::vec2 tc2 = texture_coords + glm::vec2(1.0f / 16, 1.0f / 16);    // add offset for top right corner
             glm::vec2 tc3 = texture_coords + glm::vec2(0.0f, 1.0f / 16);         // add offset for bottom left corner
 
-            // RETARDED HEIGHT MAP � 2.0
-            // - calculate normal vector            
-            normalA = glm::normalize(glm::cross(p1 - p0, p2 - p0));
-            normalB = glm::normalize(glm::cross(p2 - p0, p3 - p0));
-            normal = (normalA + normalB) / 2.0f;
+            // compute normal vector
+            glm::vec3 normal1 = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+            glm::vec3 normal2 = glm::normalize(glm::cross(p2 - p0, p3 - p0));
+            glm::vec3 avgNormal = (normal1 + normal2) * 0.5f; // Multiplication is marginally faster than division
 
-            // - place vertices and ST to mesh
-            out_vertices.emplace_back(Vertex{ p0, -normal, tc0 });
-            out_vertices.emplace_back(Vertex{ p1, -normal, tc1 });
-            out_vertices.emplace_back(Vertex{ p2, -normal, tc2 });
-            out_vertices.emplace_back(Vertex{ p3, -normal, tc3 });
+            // add vertices and texture coordinates to mesh
+            out_vertices.emplace_back(Vertex{ p0, -avgNormal, tc0 });
+            out_vertices.emplace_back(Vertex{ p1, -avgNormal, tc1 });
+            out_vertices.emplace_back(Vertex{ p2, -avgNormal, tc2 });
+            out_vertices.emplace_back(Vertex{ p3, -avgNormal, tc3 });
 
-            // - place indices
+            // update indices
             indices_counter += 4;
-            out_uvs.emplace_back(indices_counter - 4);
-            out_uvs.emplace_back(indices_counter - 2);
-            out_uvs.emplace_back(indices_counter - 3);
-            out_uvs.emplace_back(indices_counter - 4);
-            out_uvs.emplace_back(indices_counter - 1);
-            out_uvs.emplace_back(indices_counter - 2);
+            out_uvs.insert(out_uvs.end(), { indices_counter - 4, indices_counter - 2, indices_counter - 3,
+                                            indices_counter - 4, indices_counter - 1, indices_counter - 2 });
 
-            // - normal averaging
+            // average normals
             pair0 = { x_coord, z_coord };
             pair1 = { x_coord + mesh_step_size, z_coord };
             pair2 = { x_coord + mesh_step_size, z_coord + mesh_step_size };
             pair3 = { x_coord, z_coord + mesh_step_size };
-            normal_sums[pair0] -= normal;
-            normal_sums[pair1] -= normal;
-            normal_sums[pair2] -= normal;
-            normal_sums[pair3] -= normal;
+            normal_sums[pair0] -= avgNormal;
+            normal_sums[pair1] -= avgNormal;
+            normal_sums[pair2] -= avgNormal;
+            normal_sums[pair3] -= avgNormal;
+
         }
     }
 
-    // - normal averaging, 2nd iter
+    // averaging for normals, 2nd iteration
     for (auto& vertex : out_vertices) {
-        pair = { static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z) };
-        vertex.normal = glm::normalize(normal_sums[pair]); // no need to divide by four, we can just normalize
+        // Calculate the index pair for the normal sum lookup
+        auto pair = std::make_pair(static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z));
 
-        _heights[{vertex.position.x* HEGHTMAP_SCALE, vertex.position.z* HEGHTMAP_SCALE}] = vertex.position.y; // for heightmap collision
+        // Calculate the normal by normalizing the summed normals directly
+        vertex.normal = glm::normalize(normal_sums[pair]);
+
+        // Store the vertex height for heightmap collision
+        _heights[{vertex.position.x* HEGHTMAP_SCALE, vertex.position.z* HEGHTMAP_SCALE}] = vertex.position.y;
     }
-
-    print("HeightMap: height map vertices: " << out_vertices.size());
 }
 
 glm::vec2 Obj::HeightMap_GetSubtex(const float height)
