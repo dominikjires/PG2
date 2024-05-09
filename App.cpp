@@ -145,6 +145,7 @@ int App::Run(void)
         camera.position.x = 1.0f;
         camera.position.y = 1.0f;
         camera.position.z = 1.0f;
+
         glm::vec3 camera_movement{};
 
         // Mouselook
@@ -157,6 +158,7 @@ int App::Run(void)
 
         // Jetpack
         float falling_speed = 0;
+        float jumping_speed = 0;
         bool is_grounded = true;
 
         // Jukebox
@@ -184,8 +186,8 @@ int App::Run(void)
 
             // Movement sound
             if ((camera_movement.x != 0 || camera_movement.z != 0) && is_grounded) {
-                if ((!camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
-                    || (camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
+                if ((!camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
+                    || (camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
                     audio.PlayWalk(); // Play step sound if grounded and walking and we didn't play the sound for the duration of delay (sprinting == shorter delay)
                     walk_last_played_timestamp = current_timestamp;
                 }
@@ -200,44 +202,47 @@ int App::Run(void)
                 camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x), static_cast<GLfloat>(window_height / 2.0 - cursor_y));
                 glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
             }
-
+            bool is_space_pressed = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
             // Heightmap collision – for our X and Z get Y coordinate for ground level
             auto heightmap_y = GetHeightmapY(camera.position.x, camera.position.z);
-
             // Jetpack
             float min_hei = heightmap_y + PLAYER_HEIGHT;// Camera's smallest Y coordinate possible
-            if (camera_movement.y > 0.0f) {             // If holding space
-                camera.position.y += delta_time * 2.0f; // Go up
+            if (is_space_pressed && is_grounded) {
+                jumping_speed = 5.0f;
+                audio.PlayJump();
+            }
+            if (jumping_speed > 0.0f) {             // If holding space
                 falling_speed = 0;
+                jumping_speed -= delta_time * 9.81f;
+                camera.position.y += delta_time * jumping_speed;
                 if (camera.position.y < min_hei) {      // For going up steep hills, so we cannot go into the hill
                     camera.position.y = min_hei;
                 }
                 is_grounded = false;
             }
-            else {                                              // If not holding space
+            else {
+                // If not holding space
                 falling_speed += delta_time * 9.81f;            // Gravity
                 camera.position.y -= delta_time * falling_speed;// Fall
                 if (camera.position.y < min_hei) {              // Do not fall through ground
                     camera.position.y = min_hei;
                     falling_speed = 0;
                     if (!is_grounded) {                         // Landing sound
-                        audio.PlayWalk();
+                        audio.PlayLand();
                     }
                     is_grounded = true;
                 }
                 else if (is_grounded && camera.position.y - min_hei > 1.0f) {
-                    is_grounded = false;                        // Do not make step sounds if transitioned from walking to falling w/o jetpack
+                    is_grounded = false;                       
                 }
             }
-            audio.UpdateJetpackVolume(camera_movement.y > 0.0f);
+            audio.UpdateFallVolume(falling_speed > 1.0f && !is_grounded);
 
             // Create View Matrix according to camera settings
             glm::mat4 mx_view = camera.GetViewMatrix();            
 
             // Update objects
-            jukebox_to_player.x = camera.position.x - obj_jukebox->position.x;
-            jukebox_to_player.y = camera.position.z - obj_jukebox->position.z;
-            jukebox_to_player_n = glm::normalize(jukebox_to_player);
+
             UpdateModels(delta_time);
             UpdateProjectiles(delta_time);
 
@@ -308,9 +313,9 @@ int App::Run(void)
                 transparent_pair->second->_distance_from_camera = glm::length(camera.position - transparent_pair->second->position);
             }
             // - - Sort all transparent objects in vector by their distance from camera (far to near)
-			std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Obj*>*& a, std::pair<const std::string, Obj*>*& b) {
-				return a->second->_distance_from_camera > b->second->_distance_from_camera;
-			});
+            std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Obj*>*& a, std::pair<const std::string, Obj*>*& b) {
+                return a->second->_distance_from_camera > b->second->_distance_from_camera;
+                });
             // - - Draw all transparent objects in sorted order
             for (auto& transparent_pair : scene_transparent_pairs) {
                 transparent_pair->second->Draw(my_shader);
