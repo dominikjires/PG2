@@ -1,4 +1,4 @@
-// NEŠAHAT AŽ NA 1 FUNKCI VIZ DOLE
+// NEÅ AHAT AÅ½ NA 1 FUNKCI VIZ DOLE
 #include <iostream>
 
 #include <glm/ext/matrix_transform.hpp>
@@ -90,8 +90,8 @@ void Camera::ToggleSprint() {
     sprint = !sprint;
 }
 
-//PØEDÌLAT
-void Camera::UpdateListenerPosition(AudioSlave& audio)
+//PÃ˜EDÃŒLAT
+void Camera::UpdateListenerPosition(Audio& audio)
 {
     audio.UpdateListenerPosition(position, front, up_global);
 }
