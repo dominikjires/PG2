@@ -18,7 +18,7 @@ Obj::Obj(std::string name, const std::filesystem::path& path_main, const std::fi
     use_aabb(use_aabb)
 {
     if (!is_height_map) {
-        LoadOBJFile(path_main);
+        LoadObj(path_main);
     }
     else {
         HeightMap(path_main);        
@@ -46,7 +46,7 @@ void Obj::Draw(ShaderProgram& shader)
     mesh.Draw(shader, mx_model);
 }
 
-void Obj::LoadOBJFile(const std::filesystem::path& file_name)
+void Obj::LoadObj(const std::filesystem::path& file_name)
 {
 
     std::vector<GLuint> vertexIndices, uvIndices, normalIndices;
@@ -70,20 +70,17 @@ void Obj::LoadOBJFile(const std::filesystem::path& file_name)
             line_success = true;
             first_two_chars = line.substr(0, 2);
             first_three_chars = line.substr(0, 3);
-            // v -1.183220029 4.784470081 47.4618988
             if (first_two_chars == "v ") {
                 vertex_or_normal = {};
                 (void)sscanf_s(line.c_str(), "v %f %f %f", &vertex_or_normal.x, &vertex_or_normal.y, &vertex_or_normal.z);
                 temp_vertices.push_back(vertex_or_normal);
             }
-            // vt 0.5000 0.7500
             else if (first_three_chars == "vt ") {
                 uv = {};
                 (void)sscanf_s(line.c_str(), "vt %f %f", &uv.x, &uv.y);
-                uv.y = -uv.y; // DDS textures are inverted
+                uv.y = -uv.y;
                 temp_uvs.push_back(uv);
             }
-            // vn 0.7235898972 -0.6894102097 -0.03363365307
             else if (first_three_chars == "vn ") {
                 vertex_or_normal = {};
                 (void)sscanf_s(line.c_str(), "vn %f %f %f", &vertex_or_normal.x, &vertex_or_normal.y, &vertex_or_normal.z);
@@ -91,13 +88,11 @@ void Obj::LoadOBJFile(const std::filesystem::path& file_name)
             }
             else if (first_two_chars == "f ") {
                 auto n = std::count(line.begin(), line.end(), '/');
-                // f 1 2 3
                 if (n == 0) {
                     unsigned int indices_temp[3]{};
                     (void)sscanf_s(line.c_str(), "f %d %d %d", &indices_temp[0], &indices_temp[1], &indices_temp[2]);
                     vertexIndices.insert(vertexIndices.end(), { indices_temp[0], indices_temp[1], indices_temp[2] });
                 }
-                // f 3/1 4/2 5/3
                 else if (n == 3) {
                     unsigned int indices_temp[6]{};
                     (void)sscanf_s(line.c_str(), "f %d/%d %d/%d %d/%d", &indices_temp[0], &indices_temp[3], &indices_temp[1], &indices_temp[4], &indices_temp[2], &indices_temp[5]);
@@ -105,14 +100,13 @@ void Obj::LoadOBJFile(const std::filesystem::path& file_name)
                     uvIndices.insert(uvIndices.end(), { indices_temp[3], indices_temp[4], indices_temp[5] });
                 }
                 else if (n == 6) {
-                    // f 7//1 8//2 9//3
+    
                     if (line.find("//") != std::string::npos) {
                         unsigned int indices_temp[6]{};
                         (void)sscanf_s(line.c_str(), "f %d//%d %d//%d %d//%d", &indices_temp[0], &indices_temp[3], &indices_temp[1], &indices_temp[4], &indices_temp[2], &indices_temp[5]);
                         vertexIndices.insert(vertexIndices.end(), { indices_temp[0], indices_temp[1], indices_temp[2] });
                         normalIndices.insert(normalIndices.end(), { indices_temp[3], indices_temp[4], indices_temp[5] });
                     }                
-                    // f 6/4/1 3/5/3 7/6/5
                     else {
                         unsigned int indices_temp[9]{};
                         (void)sscanf_s(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &indices_temp[0], &indices_temp[3], &indices_temp[6], &indices_temp[1], &indices_temp[4], &indices_temp[7], &indices_temp[2], &indices_temp[5], &indices_temp[8]);
@@ -121,7 +115,6 @@ void Obj::LoadOBJFile(const std::filesystem::path& file_name)
                         normalIndices.insert(normalIndices.end(), { indices_temp[6], indices_temp[7], indices_temp[8] });
                     }
                 }
-                // f 1/1/1 2/2/2 22/23/3 21/22/4
                 else if (n == 8) {
                     unsigned int v[4]{};
                     unsigned int vt[4]{};
@@ -145,7 +138,7 @@ void Obj::LoadOBJFile(const std::filesystem::path& file_name)
         }
     }
     file_reader.close();
-    print_loading("#");
+
 
     // [2] Calculate collision sphere/box
     // - Bounding sphere
@@ -276,10 +269,12 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
 					)));
 
             // Get texture coords in vertices, bottom left of geometry == bottom left of texture
-            glm::vec2 tc0 = HeightMap_GetSubtexByHeight(max_h);
-            glm::vec2 tc1 = tc0 + glm::vec2((1.0f / 16), 0.0f);		    // add offset for bottom right corner
-            glm::vec2 tc2 = tc0 + glm::vec2((1.0f / 16), (1.0f / 16));  // add offset for top right corner
-            glm::vec2 tc3 = tc0 + glm::vec2(0.0f, (1.0f / 16));         // add offset for bottom left corner
+            // Get texture coords in vertices, bottom left of geometry == bottom left of texture
+            glm::vec2 texture_coords = HeightMap_GetSubtex(max_h);
+            glm::vec2 tc0 = texture_coords;
+            glm::vec2 tc1 = texture_coords + glm::vec2(1.0f / 16, 0.0f);		      // add offset for bottom right corner
+            glm::vec2 tc2 = texture_coords + glm::vec2(1.0f / 16, 1.0f / 16);    // add offset for top right corner
+            glm::vec2 tc3 = texture_coords + glm::vec2(0.0f, 1.0f / 16);         // add offset for bottom left corner
 
             // RETARDED HEIGHT MAP ™ 2.0
             // - calculate normal vector            
@@ -325,18 +320,16 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
     print("HeightMap: height map vertices: " << out_vertices.size());
 }
 
-glm::vec2 Obj::HeightMap_GetSubtexST(const int x, const int y)
+glm::vec2 Obj::HeightMap_GetSubtex(const float height)
 {
-    return glm::vec2((x * 1.0f / 16), (y * 1.0f / 16)); // Expects tilemap with 16 rows&cols; interpolation is dealt with via bleeding pixels
-}
-
-glm::vec2 Obj::HeightMap_GetSubtexByHeight(float height)
-{
-    if (height > 0.9) return HeightMap_GetSubtexST(4, 4);
-    else if (height > 0.8) return HeightMap_GetSubtexST(1, 4);
-    else if (height > 0.5) return HeightMap_GetSubtexST(7, 1);
-    else if (height > 0.3) return HeightMap_GetSubtexST(4, 1);
-    else return HeightMap_GetSubtexST(1, 1);
+    if (height > 0.8)
+        return glm::vec2(1.0f / 16, 4.0f / 16);
+    else if (height > 0.5)
+        return glm::vec2(7.0f / 16, 1.0f / 16);
+    else if (height > 0.3)
+        return glm::vec2(4.0f / 16, 1.0f / 16);
+    else
+        return glm::vec2(1.0f / 16, 1.0f / 16);
 }
 
 bool Obj::Collision_CheckPoint(glm::vec3 point) const

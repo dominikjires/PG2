@@ -50,10 +50,10 @@ private:
     // Transformations
     glm::vec4 init_rotation{}; // axes xyz + angle (deg); if model is weirdly rotated, it can be fixed with this rotation and other rotations are relative to this
 
-    void LoadOBJFile(const std::filesystem::path& file_name);
+    void LoadObj(const std::filesystem::path& file_name);
 
     // HeightMap
     void HeightMap(const std::filesystem::path& file_name);
-    glm::vec2 HeightMap_GetSubtexST(const int x, const int y);
-    glm::vec2 HeightMap_GetSubtexByHeight(float height);
+    glm::vec2 HeightMap_GetSubtex(const float height);
+
 };
