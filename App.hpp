@@ -5,7 +5,7 @@
 #include "Obj.hpp"
 #include "ShaderProgram.hpp"
 #include "Camera.hpp"
-#include "AudioSlave.hpp"
+#include "Audio.hpp"
 
 #define PLAYER_HEIGHT 1.0f      // Camera above ground
 #define HEIGHTMAP_SHIFT 50.0f   // Heightmap is shifted by this value on x and z coordinates
@@ -64,7 +64,7 @@ private:
 
     ShaderProgram my_shader;
 
-    AudioSlave audio;
+    Audio audio;
 
     int is_flashlight_on = 1;
 
