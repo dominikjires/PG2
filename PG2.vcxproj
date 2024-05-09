@@ -154,7 +154,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="gl_err_callback.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Obj.cpp" />
     <ClCompile Include="PG2.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -166,7 +166,7 @@
     <ClInclude Include="gl_err_callback.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Miniball.hpp" />
-    <ClInclude Include="Model.hpp" />
+    <ClInclude Include="Obj.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Vertex.hpp" />

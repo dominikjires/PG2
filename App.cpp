@@ -308,7 +308,7 @@ int App::Run(void)
                 transparent_pair->second->_distance_from_camera = glm::length(camera.position - transparent_pair->second->position);
             }
             // - - Sort all transparent objects in vector by their distance from camera (far to near)
-			std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Model*>*& a, std::pair<const std::string, Model*>*& b) {
+			std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Obj*>*& a, std::pair<const std::string, Obj*>*& b) {
 				return a->second->_distance_from_camera > b->second->_distance_from_camera;
 			});
             // - - Draw all transparent objects in sorted order

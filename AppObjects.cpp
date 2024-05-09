@@ -9,13 +9,13 @@
 
 #define JUKEBOX_SPEED 2.0f
 
-Model* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb)
+Obj* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb)
 {	
 	if (name.substr(0, 15) != "obj_projectile_") print("Loading " << name << ":"); // Print object name we're currently loading except projectiles
 
 	std::filesystem::path modelpath("./resources/objects/" + obj);
 	std::filesystem::path texturepath("./resources/textures/" + tex);
-	auto model = new Model(name, modelpath, texturepath, position, scale, rotation, false, use_aabb);
+	auto model = new Obj(name, modelpath, texturepath, position, scale, rotation, false, use_aabb);
 
 	if (is_opaque) {
 		scene_opaque.insert({ name, model});
@@ -104,7 +104,7 @@ void App::InitAssets()
 	position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
 	scale = HEGHTMAP_SCALE;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	auto obj_heightmap = new Model("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
+	auto obj_heightmap = new Obj("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
 	scene_opaque.insert({ "obj_heightmap", obj_heightmap });
 	_heights = &obj_heightmap->_heights;
 

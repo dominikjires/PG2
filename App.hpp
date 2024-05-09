@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "Model.hpp"
+#include "Obj.hpp"
 #include "ShaderProgram.hpp"
 #include "Camera.hpp"
 #include "AudioSlave.hpp"
@@ -21,14 +21,14 @@ public:
     bool Init();
     void InitAssets();
     int Run(); // Run every frame
-    Model* CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb);
+    Obj* CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb);
     void UpdateModels(float delta_time); // Inside Run(); time based update of objects in the scene
 
     ~App();
 private:
-    std::map<std::string, Model*> scene_opaque;
-    std::map<std::string, Model*> scene_transparent;
-    std::vector<std::pair<const std::string, Model*>*> scene_transparent_pairs; // Used for sorting transparent scene
+    std::map<std::string, Obj*> scene_opaque;
+    std::map<std::string, Obj*> scene_transparent;
+    std::vector<std::pair<const std::string, Obj*>*> scene_transparent_pairs; // Used for sorting transparent scene
 
     bool is_vsync_on{};
     bool is_fullscreen_on = false;
@@ -69,7 +69,7 @@ private:
     int is_flashlight_on = 1;
 
     // Jukebox
-    Model* obj_jukebox{};
+    Obj* obj_jukebox{};
     glm::vec2 jukebox_to_player{};
     glm::vec2 jukebox_to_player_n{};
     int is_jukebox_on = 1;
@@ -79,12 +79,12 @@ private:
     float GetHeightmapY(float position_x, float position_z) const;
 
     // Collision
-    std::vector<Model*> collisions; // All objects projectile can collide with
+    std::vector<Obj*> collisions; // All objects projectile can collide with
 
     // Projectiles
     const float projectile_speed = 20.0f;
     int projectile_n = 0;                   // Currently used projectile
-    Model* projectiles[N_PROJECTILES]{};    // Pool of projectiles
+    Obj* projectiles[N_PROJECTILES]{};    // Pool of projectiles
     glm::vec3 projectile_directions[N_PROJECTILES]{};
     bool is_projectile_moving[N_PROJECTILES]{};
     void Shoot();
