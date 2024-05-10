@@ -265,11 +265,12 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
 
             // Get max normalized height for tile, set texture accordingly
             // Grayscale image returns 0..256, normalize to 0.0f..1.0f by dividing by 256 (255 ?)
-            float max_h = std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord)) / 255.0f,
-                std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)) / 255.0f,
-                    std::max(hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)) / 255.0f,
-                        hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)) / 255.0f
+            float max_h = std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord)) / 256.0f,
+                std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)) / 256.0f,
+                    std::max(hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)) / 256.0f,
+                        hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)) / 256.0f
                     )));
+
 
             // Get texture coords in vertices, bottom left of geometry == bottom left of texture
             // Get texture coords in vertices, bottom left of geometry == bottom left of texture

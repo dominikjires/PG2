@@ -9,7 +9,7 @@
 
 #define PLAYER_HEIGHT 1.0f      // Camera above ground
 #define HEIGHTMAP_SHIFT 50.0f   // Heightmap is shifted by this value on x and z coordinates
-#define N_PROJECTILES 10        // How many projectiles are there in the pool
+#define NUMBER_OF_PROJECTILES 10        // How many projectiles are there in the pool
 
 #define HIDE_CUBES_INSTEAD_DESTROY true // If hit by projectile, glass cubes are hidden under ground instead of removed from scene ('R' key does nothing if false)
 #define HIDE_CUBE_Y 10.0f               // Hide cubes by subtracting this from their Y coordinate
@@ -81,12 +81,13 @@ private:
     // Collision
     std::vector<Obj*> collisions; // All objects projectile can collide with
 
-    // Projectiles
     const float projectile_speed = 20.0f;
-    int projectile_n = 0;                   // Currently used projectile
-    Obj* projectiles[N_PROJECTILES]{};    // Pool of projectiles
-    glm::vec3 projectile_directions[N_PROJECTILES]{};
-    bool is_projectile_moving[N_PROJECTILES]{};
+    Obj* projectiles[NUMBER_OF_PROJECTILES]{};
+    glm::vec3 projectile_directions[NUMBER_OF_PROJECTILES]{};
+    bool is_projectile_moving[NUMBER_OF_PROJECTILES]{};
+    int number_of_projectiles = 0;
     void Shoot();
     void UpdateProjectiles(float delta_time);
+    bool CheckCollision(const glm::vec3& position);
+
 };

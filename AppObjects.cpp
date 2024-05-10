@@ -67,7 +67,7 @@ void App::InitAssets()
 	position = glm::vec3(0.0f, -10.0f, 0.0f); // Hidden
 	scale = 0.05f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	for (int i = 0; i < N_PROJECTILES; i++) {
+	for (int i = 0; i < NUMBER_OF_PROJECTILES; i++) {
 		auto name = "obj_projectile_" + std::to_string(i);
 		auto obj_projectile_x = CreateModel(name, "sphere_tri_vnt.obj", "Red.png", true, position, scale, rotation, false, false);
 		projectiles[i] = obj_projectile_x;

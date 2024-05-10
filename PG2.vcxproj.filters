@@ -42,7 +42,7 @@
     <ClCompile Include="AppCallbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppProjectiles.cpp">
+    <ClCompile Include="ShooterProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
