@@ -88,7 +88,7 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         if (this_inst->is_mouselook_on) {
             this_inst->Shoot();
-            this_inst->audio.Play2DOneShot("snd_shoot");
+            this_inst->audio.PlayShot("sound_shoot");
         }
         else {
             this_inst->is_mouselook_on = true;

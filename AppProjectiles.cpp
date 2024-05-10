@@ -58,30 +58,11 @@ void App::UpdateProjectiles(float delta_time)
 							model->position.y -= HIDE_CUBE_Y;
 						}
 						// Play broken glass audio
-						audio.Play3DOneShot("snd_glass", position);
+						audio.PlayShot("sound_glass");
 					}
-					// Projectile hit jukebox � on/off light+music
-					else if (hit_name == "obj_jukebox") {
-						is_jukebox_on = (is_jukebox_on + 1) % 2;
-						audio.UpdateMusicVolume(static_cast<float>(is_jukebox_on));
-						audio.Play3DOneShot("snd_hit", position);
-					}
-					// other non-ground impact (obj_table)
-					else {
-						audio.Play3DOneShot("snd_hit", position);
-					}
-
 					break; // No need to check for other collisions
 				}
 			}
-
-			// - Heightmap collision check � if hits ground hide and play sound
-			if (position.y < GetHeightmapY(position.x, position.z)) {
-				print("PROJECTILE HIT ground");
-				hit = true;
-				audio.Play3DOneShot("snd_hit", position);
-			}
-
 			// - Hide if hit and set as idle
 			if (hit) {
 				is_projectile_moving[i] = false;

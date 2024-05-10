@@ -161,9 +161,6 @@ int App::Run(void)
         float jumping_speed = 0;
         bool is_grounded = true;
 
-        // Jukebox
-        audio.PlayMusic3D();
-
         // Main loop
         while (!glfwWindowShouldClose(window)) {
             current_timestamp = glfwGetTime();
@@ -236,7 +233,6 @@ int App::Run(void)
                     is_grounded = false;
                 }
             }
-            audio.UpdateFallVolume(falling_speed > 1.0f && !is_grounded);
 
             // Create View Matrix according to camera settings
             glm::mat4 mx_view = camera.GetViewMatrix();
@@ -245,10 +241,6 @@ int App::Run(void)
 
             UpdateModels(delta_time);
             UpdateProjectiles(delta_time);
-
-            // 3D Audio
-            camera.UpdateListenerPosition(audio);
-            audio.UpdateMusicPosition(obj_jukebox->position);
 
             // Activate shader
             my_shader.Activate();

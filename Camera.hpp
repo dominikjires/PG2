@@ -33,7 +33,6 @@ public:
     glm::vec3 ProcessInput(GLFWwindow* window, GLfloat deltaTime);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch = GL_TRUE);
     void ToggleSprint();
-    void UpdateListenerPosition(Audio& audio);
     bool sprint;
 private:
     glm::vec3 up_global;

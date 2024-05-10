@@ -90,12 +90,6 @@ void Camera::ToggleSprint() {
     sprint = !sprint;
 }
 
-//PØEDÌLAT
-void Camera::UpdateListenerPosition(Audio& audio)
-{
-    audio.UpdateListenerPosition(position, front, up_global);
-}
-
 void Camera::UpdateCameraVectors()
 {
     glm::vec3 front;
