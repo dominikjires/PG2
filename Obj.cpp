@@ -318,7 +318,7 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
         vertex.normal = glm::normalize(normal_sums[pair]);
 
         // Store the vertex height for heightmap collision
-        _heights[{vertex.position.x* HEGHTMAP_SCALE, vertex.position.z* HEGHTMAP_SCALE}] = vertex.position.y;
+        _heights[{vertex.position.x* HEIGHTMAP_SCALE, vertex.position.z* HEIGHTMAP_SCALE}] = vertex.position.y;
     }
 }
 

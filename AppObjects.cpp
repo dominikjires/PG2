@@ -62,6 +62,11 @@ void App::InitAssets()
 	scale = 0.015f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation, true, true);
+	// Tower
+	position = glm::vec3(1.0f, 0.0f, 8.0f);
+	scale = 0.05f;
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_house", "house.obj", "house.jpg", true, position, scale, rotation, true, true);
 	// Projectiles
 	print("Loading projectiles:");
 	position = glm::vec3(0.0f, -10.0f, 0.0f); // Hidden
@@ -102,7 +107,7 @@ void App::InitAssets()
 	std::filesystem::path heightspath("./resources/textures/heights.png");
 	std::filesystem::path texturepath("./resources/textures/tex_256.png");
 	position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
-	scale = HEGHTMAP_SCALE;
+	scale = HEIGHTMAP_SCALE;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	auto obj_heightmap = new Obj("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
 	scene_opaque.insert({ "obj_heightmap", obj_heightmap });
