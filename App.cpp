@@ -73,10 +73,7 @@ bool App::Init()
         // Setup callbacks
         glfwMakeContextCurrent(window);
         glfwSetKeyCallback(window, key_callback);
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         glfwSetMouseButtonCallback(window, mouse_button_callback);
-        glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetScrollCallback(window, scroll_callback);
 
         // Set V-Sync ON.
         glfwSwapInterval(1);

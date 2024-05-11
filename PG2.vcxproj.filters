@@ -39,7 +39,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppCallbacks.cpp">
+    <ClCompile Include="Callbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShooterProgram.cpp">

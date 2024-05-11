@@ -146,7 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="AppCallbacks.cpp" />
+    <ClCompile Include="Callbacks.cpp" />
     <ClCompile Include="AppHeightmap.cpp" />
     <ClCompile Include="ShooterProgram.cpp" />
     <ClCompile Include="AppObjects.cpp" />
