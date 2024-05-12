@@ -62,11 +62,6 @@ void App::InitAssets()
 	scale = 0.015f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation, true, true);
-	// Tower
-	position = glm::vec3(1.0f, 0.0f, 8.0f);
-	scale = 0.05f;
-	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_house", "house.obj", "house.jpg", true, position, scale, rotation, true, true);
 	// Projectiles
 	print("Loading projectiles:");
 	position = glm::vec3(0.0f, -10.0f, 0.0f); // Hidden
