@@ -29,5 +29,5 @@ float App::GetHeightmapY(float position_x, float position_z) const
         float y_difference = common_height - (*_heights)[{hm_x_i + 1, hm_z_i}];
         hm_y_f = common_height - x_fraction * x_difference - y_fraction * y_difference;
     }
-    return hm_y_f * HEGHTMAP_SCALE;
+    return hm_y_f * HEIGHTMAP_SCALE;
 }
