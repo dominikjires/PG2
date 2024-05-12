@@ -7,7 +7,7 @@
 #include "Mesh.hpp"
 #include "ShaderProgram.hpp"
 
-#define HEGHTMAP_SCALE 0.1f
+#define HEIGHTMAP_SCALE 0.1f
 
 class Obj
 {
