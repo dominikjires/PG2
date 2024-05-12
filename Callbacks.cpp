@@ -24,7 +24,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
                 // Store window position and size before going fullscreen
                 glfwGetWindowPos(window, &app->window_xcor, &app->window_ycor);
                 glfwGetWindowSize(window, &app->window_width_return_from_fullscreen, &app->window_height_return_from_fullscreen);
-                if (app->window_height_return_from_fullscreen == 0) app->window_height_return_from_fullscreen++; // Prevent zero height window
+                if (app->window_height_return_from_fullscreen == 0) app->window_height_return_from_fullscreen++;
                 // Switch to fullscreen mode
                 glfwSetWindowMonitor(window, app->monitor, 0, 0, app->mode->width, app->mode->height, app->mode->refreshRate);
             }

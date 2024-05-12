@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Callbacks.cpp" />
-    <ClCompile Include="AppHeightmap.cpp" />
+    <ClCompile Include="Heightmap.cpp" />
     <ClCompile Include="ShooterProgram.cpp" />
     <ClCompile Include="AppObjects.cpp" />
     <ClCompile Include="Audio.cpp" />
