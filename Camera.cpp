@@ -1,4 +1,4 @@
-// NEŠAHAT AŽ NA 1 FUNKCI VIZ DOLE
+// NEŠAHAT
 #include <iostream>
 
 #include <glm/ext/matrix_transform.hpp>

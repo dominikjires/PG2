@@ -1,27 +1,16 @@
-﻿// C++
+﻿
 #include <iostream>
 #include <chrono>
 #include <stack>
 #include <random>
 #include <sstream>
 
-// OpenCV � GL independent
 #include <opencv2/opencv.hpp>
-
-// OpenGL Extension Wrangler: allow all multiplatform GL functions
 #include <GL/glew.h> 
-// WGLEW = Windows GL Extension Wrangler :: platform specific functions (in this case Windows)
 #include <GL/wglew.h> 
-
-// GLFW toolkit
-// Uses GL calls to open GL context, i.e. GLEW must be first.
 #include <GLFW/glfw3.h>
-
-// OpenGL math
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-// Our app
 #include "App.hpp"
 #include "gl_err_callback.hpp"
 #include "ShaderProgram.hpp"
@@ -30,17 +19,16 @@
 
 App::App()
 {
-    std::cout << "Constructed...\n--------------\n";
+    std::cout << "Constructed\n";
 }
 
-// App initialization, if returns true then run run()
 bool App::Init()
 {
     try {
         // Set GLFW error callback
         glfwSetErrorCallback(error_callback);
 
-        // Init GLFW :: https://www.glfw.org/documentation.html
+        // Init GLFW
         if (!glfwInit()) {
             return false;
         }
@@ -48,14 +36,13 @@ bool App::Init()
         // Set OpenGL version
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-        // Set OpenGL profile
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // Window is hidden until everything is initialized
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-        // Open window (GL canvas) with no special properties :: https://www.glfw.org/docs/latest/quick.html#quick_create_window
-        window = glfwCreateWindow(window_width, window_height, "Moje krasne okno", NULL, NULL);
+        // Open window
+        window = glfwCreateWindow(window_width, window_height, "PG2", NULL, NULL);
         if (!window) {
             glfwTerminate();
             return false;
@@ -63,79 +50,74 @@ bool App::Init()
         glfwSetWindowUserPointer(window, this);
 
         // Hide cursor
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); // <- weird mouselook behavior
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // <- ok
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // Fullscreen On/Off
-        monitor = glfwGetPrimaryMonitor(); // Get primary monitor
-        mode = glfwGetVideoMode(monitor); // Get resolution of the monitor
+        monitor = glfwGetPrimaryMonitor();
+        mode = glfwGetVideoMode(monitor);
 
         // Setup callbacks
         glfwMakeContextCurrent(window);
         glfwSetKeyCallback(window, key_callback);
         glfwSetMouseButtonCallback(window, mouse_button_callback);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
         // Set V-Sync ON.
         glfwSwapInterval(1);
         is_vsync_on = true;
 
-        // Init GLEW :: http://glew.sourceforge.net/basic.html
+        // Init GLEW
         GLenum err = glewInit();
         if (GLEW_OK != err) {
-            fprintf(stderr, "Error: %s\n", glewGetErrorString(err)); /* Problem: glewInit failed, something is seriously wrong. */
+            // Handle initialization error
         }
         wglewInit();
 
-        //...after ALL GLFW & GLEW init ...
+        // Debug output setup
         if (GLEW_ARB_debug_output)
         {
             glDebugMessageCallback(MessageCallback, 0);
             glEnable(GL_DEBUG_OUTPUT);
-
-            //default is asynchronous debug output, use this to simulate glGetError() functionality
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
             std::cout << "GL_DEBUG enabled.\n";
         }
         else std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
-        // Set GL params
+        // OpenGL configuration
         glEnable(GL_DEPTH_TEST);
-
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_POLYGON_SMOOTH);
-
         glEnable(GL_CULL_FACE);
-
-        // Transparency blending function
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // First init OpenGL, THAN init assets: valid context MUST exist
+        // First init OpenGL, THAN init assets
         InitScene();
 
         // Show window after everything loads        
         glfwShowWindow(window);
     }
     catch (std::exception const& e) {
-        std::cerr << "Init failed : " << e.what() << "\n";
+        // Handle exception
         exit(-1);
     }
-    std::cout << "--------------\nInitialized...\n";
+    std::cout << "Initialized...\n";
     return true;
 }
+
 
 int App::Run(void)
 {
     try {
-        double current_timestamp = glfwGetTime();
-        double last_frame_time = current_timestamp;
+        double current_walk = glfwGetTime();
+        double last_frame_time = current_walk;
 
         // FPS counting
         double fps_counter_seconds = 0;
         int fps_counter_frames = 0;
 
         // Init view
-        UpdateProjectionMatrix();
+        UpdateProjection();
         glViewport(0, 0, window_width, window_height);
 
         // Camera
@@ -149,18 +131,18 @@ int App::Run(void)
         double cursor_x, cursor_y;
 
         // Walking sound
-        double walk_last_played_timestamp = current_timestamp;
-        const double walk_play_delay_normal = 0.4;
-        const double walk_play_delay_sprint = 0.25;
+        double last_walk = current_walk;
+        const double walking_delay = 0.4;
+        const double sprinting_delay = 0.2;
 
-        // Jetpack
+        // Jumping
         float falling_speed = 0;
         float jumping_speed = 0;
         bool is_grounded = true;
 
         // Main loop
         while (!glfwWindowShouldClose(window)) {
-            current_timestamp = glfwGetTime();
+            current_walk = glfwGetTime();
 
             // Time/FPS measure start
             auto fps_frame_start_timestamp = std::chrono::steady_clock::now();
@@ -170,8 +152,8 @@ int App::Run(void)
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // === After clearing the canvas ===
-            float delta_time = static_cast<float>(current_timestamp - last_frame_time);
-            last_frame_time = current_timestamp;
+            float delta_time = static_cast<float>(current_walk - last_frame_time);
+            last_frame_time = current_walk;
 
             // Player movement
             camera_movement = camera.ProcessInput(window, delta_time);
@@ -180,14 +162,14 @@ int App::Run(void)
 
             // Movement sound
             if ((camera_movement.x != 0 || camera_movement.z != 0) && is_grounded) {
-                if ((!camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
-                    || (camera.sprint && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
-                    audio.PlayWalk(); // Play step sound if grounded and walking and we didn't play the sound for the duration of delay (sprinting == shorter delay)
-                    walk_last_played_timestamp = current_timestamp;
+                if ((!camera.sprint && current_walk > last_walk + walking_delay)
+                    || (camera.sprint && current_walk > last_walk + sprinting_delay)) {
+                    audio.PlayWalk();
+                    last_walk = current_walk;
                 }
             }
             else {
-                walk_last_played_timestamp = current_timestamp; // Consistent delay for first step sound after movement starts
+                last_walk = current_walk;
             }
 
             // Mouselook � get cursor's offset from window center and the move it back to center
@@ -199,7 +181,7 @@ int App::Run(void)
             bool is_space_pressed = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
             // Heightmap collision � for our X and Z get Y coordinate for ground level
             auto heightmap_y = GetHeightmapY(camera.position.x, camera.position.z);
-            // Jetpack
+            // Jumping
             float min_hei = heightmap_y + PLAYER_HEIGHT;// Camera's smallest Y coordinate possible
             if (is_space_pressed && is_grounded) {
                 jumping_speed = 5.0f;
@@ -263,18 +245,6 @@ int App::Run(void)
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f));
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.14f));
 
-            // - SPOTLIGHT
-            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.7f));
-            my_shader.SetUniform("u_spotlight.specular", glm::vec3(0.56f));
-            my_shader.SetUniform("u_spotlight.position", camera.position);
-            my_shader.SetUniform("u_spotlight.direction", camera.front);
-            my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(20.0f)));
-            my_shader.SetUniform("u_spotlight.cos_outer_cone", glm::cos(glm::radians(27.0f)));
-            my_shader.SetUniform("u_spotlight.constant", 1.0f);
-            my_shader.SetUniform("u_spotlight.linear", 0.07f);
-            my_shader.SetUniform("u_spotlight.exponent", 0.017f);
-            my_shader.SetUniform("u_spotlight.on", is_flashlight_on);
-
             // Draw the scene
             // - Draw opaque objects
             for (auto& [key, value] : scene_opaque) {
@@ -319,7 +289,7 @@ int App::Run(void)
             }
             // Window title
             std::stringstream ss;
-            ss << FPS << " FPS | " << FOV << " FOV | X" << camera.position.x << " Y" << camera.position.y << " Z" << camera.position.z;
+            ss << FPS << " FPS";
             glfwSetWindowTitle(window, ss.str().c_str());
         }
     }
@@ -348,39 +318,54 @@ App::~App()
     std::cout << "Bye...\n";
 }
 
-void App::UpdateProjectionMatrix(void)
-{
-    if (window_height < 1) window_height = 1; // avoid division by 0
+void App::UpdateProjection() {
+    // Ensure window height is not zero to avoid division by zero
+    const float minWindowHeight = 1.0f;
+    window_height = std::max(window_height, static_cast<int>(minWindowHeight));
 
-    float ratio = static_cast<float>(window_width) / window_height;
+    // Calculate aspect ratio
+    const float aspectRatio = static_cast<float>(window_width) / window_height;
 
-    mx_projection = glm::perspective(
-        glm::radians(FOV),   // The vertical Field of View
-        ratio,               // Aspect Ratio. Depends on the size of your window.
-        0.1f,                // Near clipping plane. Keep as big as possible, or you'll get precision issues.
-        20000.0f             // Far clipping plane. Keep as little as possible.
-    );
+    // Define clipping planes
+    const float nearClipPlane = 0.1f;
+    const float farClipPlane = 20000.0f;
+
+    // Calculate vertical field of view in radians
+    const float verticalFOV = glm::radians(FOV);
+
+    // Generate perspective projection matrix
+    mx_projection = glm::perspective(verticalFOV, aspectRatio, nearClipPlane, farClipPlane);
 }
 
 void App::PrintGLInfo()
 {
-    std::cout << "\n=================== :: GL Info :: ===================\n";
-    std::cout << "GL Vendor:\t" << glGetString(GL_VENDOR) << "\n";
-    std::cout << "GL Renderer:\t" << glGetString(GL_RENDERER) << "\n";
-    std::cout << "GL Version:\t" << glGetString(GL_VERSION) << "\n";
-    std::cout << "GL Shading ver:\t" << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n\n";
+    std::cout << "\nOpenGL Information\n";
 
+    // Vendor information
+    std::cout << "Vendor:\t\t" << glGetString(GL_VENDOR) << "\n";
+
+    // Renderer information
+    std::cout << "Renderer:\t" << glGetString(GL_RENDERER) << "\n";
+
+    // OpenGL version
+    std::cout << "OpenGL Version:\t" << glGetString(GL_VERSION) << "\n";
+
+    // GLSL (OpenGL Shading Language) version
+    std::cout << "GLSL Version:\t" << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+
+    // Check OpenGL context profile
     GLint profile;
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
-    if (const auto errorCode = glGetError()) {
-        std::cout << "[!] Pending GL error while obtaining profile: " << errorCode << "\n";
-        //return;
-    }
     if (profile & GL_CONTEXT_CORE_PROFILE_BIT) {
-        std::cout << "Core profile" << "\n";
+        std::cout << "Profile:\tCore Profile\n";
     }
     else {
-        std::cout << "Compatibility profile" << "\n";
+        std::cout << "Profile:\tCompatibility Profile\n";
     }
-    std::cout << "=====================================================\n\n";
+
+    // Check for OpenGL errors
+    if (const auto errorCode = glGetError()) {
+        std::cout << "Pending GL error while obtaining profile" << errorCode << "\n";
+    }
 }
+

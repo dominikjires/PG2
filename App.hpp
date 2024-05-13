@@ -51,24 +51,19 @@ private:
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(243 / 255.0f, 196 / 255.0f, 128 / 255.0f, 0.0f);
 
-    void UpdateProjectionMatrix();
+    void UpdateProjection();
 
     void PrintGLInfo();
 
     static void error_callback(int error, const char* description);
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+    static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
     ShaderProgram my_shader;
 
     Audio audio;
 
     int is_flashlight_on = 1;
-
-    // Jukebox
-    Obj* obj_jukebox{};
-    glm::vec2 jukebox_to_player{};
-    glm::vec2 jukebox_to_player_n{};
-    int is_jukebox_on = 1;
 
     // Heightmap
     std::map<std::pair<float, float>, float>* _heights{};
