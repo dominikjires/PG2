@@ -62,6 +62,21 @@ void App::InitAssets()
 	scale = 0.015f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation, true, true);
+	// Box1
+	position = glm::vec3(4.0f, 0.5f, 15.0f);
+	scale = 0.2f;
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_box1", "box.obj", "box.png", true, position, scale, rotation, true, true);
+	// Box2
+	position = glm::vec3(2.98f, 0.5f, 15.0f);
+	scale = 0.2f;
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_box2", "box.obj", "box.png", true, position, scale, rotation, true, true);
+	// Box3
+	position = glm::vec3(3.5f, 1.5f, 15.0f);
+	scale = 0.2f;
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_box3", "box.obj", "box.png", true, position, scale, rotation, true, true);
 	// Projectiles
 	print("Loading projectiles:");
 	position = glm::vec3(0.0f, -10.0f, 0.0f); // Hidden
@@ -80,20 +95,22 @@ void App::InitAssets()
 	}
 
 	// = TRANSPARENT MODELS =
+	// Glass cubes on the table
 	scale = 0.5f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	position = glm::vec3(0.0f, 3.0f, 6.0f);
-	CreateModel("obj_glass_cube_r", "sphere_tri_vnt.obj", "Blue.png", false, position, scale, rotation, true, false);
-	position.x += 10.0f;
-	position.y += 2.0f;
-	position.z += 1.0f;
-	CreateModel("obj_glass_cube_g", "sphere_tri_vnt.obj", "Blue.png", false, position, scale, rotation, true, false);
-	position.x -= 7.0f;
-	position.y += 1.0f;
-	position.z += 3.0f;
-	CreateModel("obj_glass_cube_b", "sphere_tri_vnt.obj", "Blue.png", false, position, scale, rotation, true, false);
-
-
+	position = glm::vec3(0.2f, 1.0f, 6.0f);
+	CreateModel("obj_glass_cube_r", "cube_triangles_normals_tex.obj", "Red.png", false, position, scale, rotation, true, false);
+	position.x += 0.8f;
+	CreateModel("obj_glass_cube_g", "cube_triangles_normals_tex.obj", "Green.png", false, position, scale, rotation, true, false);
+	position.x += 0.8f;
+	CreateModel("obj_glass_cube_b", "cube_triangles_normals_tex.obj", "Blue.png", false, position, scale, rotation, true, false);
+	// Testing bounding sphere (visualize bounding sphere collider around object)
+	if (DEBUG_BOUNDINGS) {
+		position = glm::vec3(0.0f, 0.0f, 0.0f);
+		scale = 0.2f;
+		rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+		CreateModel("obj_sphere", "sphere_tri_vnt.obj", "Green.png", false, position, scale, rotation, false, false);
+	}
 
 	// == HEIGHTMAP ==
 	print("Loading heightmap ...");
