@@ -48,7 +48,7 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppObjects.cpp">
+    <ClCompile Include="Objects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Audio.cpp">

@@ -9,7 +9,7 @@
 
 #define PLAYER_HEIGHT 1.0f      // Camera above ground
 #define HEIGHTMAP_SHIFT 50.0f   // Heightmap is shifted by this value on x and z coordinates
-#define NUMBER_OF_PROJECTILES 10        // How many projectiles are there in the pool
+#define PROJECTILES_N 10        // How many projectiles are there in the pool
 
 #define HIDE_CUBES_INSTEAD_DESTROY true // If hit by projectile, glass cubes are hidden under ground instead of removed from scene ('R' key does nothing if false)
 #define HIDE_CUBE_Y 10.0f               // Hide cubes by subtracting this from their Y coordinate
@@ -19,10 +19,10 @@ public:
     App();
 
     bool Init();
-    void InitAssets();
+    void InitScene();
     int Run(); // Run every frame
-    Obj* CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb);
-    void UpdateModels(float delta_time); // Inside Run(); time based update of objects in the scene
+    Obj* CreateModel(const std::string& name, const std::string& obj, const std::string& tex, bool is_opaque, const glm::vec3& position, float scale, const glm::vec4& rotation, bool collision, bool use_aabb);
+    void UpdateModel(float delta_time); // Inside Run(); time based update of objects in the scene
 
     ~App();
 private:
@@ -78,9 +78,9 @@ private:
     std::vector<Obj*> collisions; // All objects projectile can collide with
 
     const float projectile_speed = 20.0f;
-    Obj* projectiles[NUMBER_OF_PROJECTILES]{};
-    glm::vec3 projectile_directions[NUMBER_OF_PROJECTILES]{};
-    bool is_projectile_moving[NUMBER_OF_PROJECTILES]{};
+    Obj* projectiles[PROJECTILES_N]{};
+    glm::vec3 projectile_directions[PROJECTILES_N]{};
+    bool is_projectile_moving[PROJECTILES_N]{};
     int number_of_projectiles = 0;
     void Shoot();
     void UpdateProjectiles(float delta_time);

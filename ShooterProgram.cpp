@@ -15,7 +15,7 @@ void App::Shoot()
 	// Set projectile state to moving
 	is_projectile_moving[number_of_projectiles] = true;
 	// Increment projectile counter and wrap around if exceeds limit
-	number_of_projectiles = (number_of_projectiles + 1) % NUMBER_OF_PROJECTILES;
+	number_of_projectiles = (number_of_projectiles + 1) % PROJECTILES_N;
 }
 
 // Function to check collision with objects in the scene
@@ -28,7 +28,7 @@ bool App::CheckCollision(const glm::vec3& position)
 			// Get the name of the collided model
 			const auto& hit_name = model->name;
 			// If the collided model is a glass cube
-			if (hit_name.substr(0, 15) == "obj_glass_cube_") {
+			if (hit_name.substr(0, 10) == "obj_sphere") {
 				// Move the cube downwards to hide it
 				model->position.y -= HIDE_CUBE_Y;
 				// Play glass breaking sound
@@ -46,7 +46,7 @@ bool App::CheckCollision(const glm::vec3& position)
 void App::UpdateProjectiles(float delta_time)
 {
 	// Iterate through each projectile
-	for (int i = 0; i < NUMBER_OF_PROJECTILES; i++) {
+	for (int i = 0; i < PROJECTILES_N; i++) {
 		// If projectile is moving
 		if (is_projectile_moving[i]) {
 			// Generate unique name for the projectile

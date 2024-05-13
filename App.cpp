@@ -111,7 +111,7 @@ bool App::Init()
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // First init OpenGL, THAN init assets: valid context MUST exist
-        InitAssets();
+        InitScene();
 
         // Show window after everything loads        
         glfwShowWindow(window);
@@ -236,7 +236,7 @@ int App::Run(void)
 
             // Update objects
 
-            UpdateModels(delta_time);
+            UpdateModel(delta_time);
             UpdateProjectiles(delta_time);
 
             // Activate shader
@@ -262,19 +262,6 @@ int App::Run(void)
             my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f));
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.14f));
-
-            // - POINT LIGHT :: JUKEBOX
-            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 1.0f));
-            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.07f));
-            my_shader.SetUniform("u_point_lights[0].on", is_jukebox_on);
-            glm::vec3 point_light_pos = obj_jukebox->position; // Light position infront of the jukebox
-            point_light_pos.y += 1.0f;
-            point_light_pos.x += 0.7f * jukebox_to_player_n.x;
-            point_light_pos.z += 0.7f * jukebox_to_player_n.y;
-            my_shader.SetUniform("u_point_lights[0].position", point_light_pos);
-            my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
-            my_shader.SetUniform("u_point_lights[0].linear", 1.0f);
-            my_shader.SetUniform("u_point_lights[0].exponent", 0.5f);
 
             // - SPOTLIGHT
             my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.7f));

@@ -149,7 +149,7 @@
     <ClCompile Include="Callbacks.cpp" />
     <ClCompile Include="Heightmap.cpp" />
     <ClCompile Include="ShooterProgram.cpp" />
-    <ClCompile Include="AppObjects.cpp" />
+    <ClCompile Include="Objects.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="gl_err_callback.cpp" />
