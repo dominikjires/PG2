@@ -12,3 +12,7 @@ Welcome to the PG2 game project! This repository contains the source code for PG
 - **Shoot:** Press the left mouse button to shoot.
 - **Flashlight Intensity:** Use the mouse wheel to control the intensity of your flashlight.
 
+- 
+**Note:** some users may need to add the `opencv_world490d.dll` file to the repository for full functionality.
+
+
