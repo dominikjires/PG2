@@ -86,7 +86,7 @@ void App::InitScene()
     CreateModel("obj_box3", "box.obj", "box.png", true, position, scale, rotation, true, true);
 
     // Create spheres in a circular pattern
-    scale = 0.5f;
+    scale = 0.6f;
     rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
     float radius = 4.0f;
