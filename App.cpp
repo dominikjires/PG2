@@ -237,12 +237,15 @@ int App::Run(void) {
             my_shader.SetUniform("u_ambient_alpha", 0.0f);
             my_shader.SetUniform("u_diffuse_alpha", 0.7f);
             my_shader.SetUniform("u_camera_position", camera.position);
-            my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f));
-            my_shader.SetUniform("u_material.specular", glm::vec3(1.0f));
-            my_shader.SetUniform("u_material.shininess", 96.0f);
-            my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
+            // Material
+            my_shader.SetUniform("u_material.shininess", 50.0f);
+            my_shader.SetUniform("u_material.specular", glm::vec3(0.5f));
+            my_shader.SetUniform("u_material.ambient", glm::vec3(0.4f, 0.2f, 0.05f));
+            // Directional light
+            my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.2f));
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f));
-            my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.14f));
+            my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.5f));
+
 
             // Draw opaque objects
             for (auto& [key, value] : scene_opaque) {
