@@ -23,7 +23,6 @@ public:
     int Run(); // Run every frame
     Obj* CreateModel(const std::string& name, const std::string& obj, const std::string& tex, bool is_opaque, const glm::vec3& position, float scale, const glm::vec4& rotation, bool collision, bool use_aabb);
     void UpdateModel(float delta_time); // Inside Run(); time based update of objects in the scene
-
     ~App();
 private:
     std::map<std::string, Obj*> scene_opaque;
@@ -33,6 +32,8 @@ private:
     bool is_vsync_on{};
     bool is_fullscreen_on = false;
     bool is_mouselook_on = true;
+    int is_flashlight_on = 1;
+    float light_intensity = 0.7f; // Default light intensity
 
     GLFWmonitor* monitor{};
     const GLFWvidmode* mode{};
@@ -56,11 +57,10 @@ private:
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
     ShaderProgram my_shader;
 
     Audio audio;
-
-    int is_flashlight_on = 1;
 
     // Heightmap
     std::map<std::pair<float, float>, float>* _heights{};

@@ -75,6 +75,26 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
     }
 }
 
+void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    auto app = static_cast<App*>(glfwGetWindowUserPointer(window));
+
+    // Adjust light intensity based on mouse scroll direction
+    if (yoffset > 0) {
+        // Increase light intensity
+        app->light_intensity += 0.1f;
+        if (app->light_intensity > 1.0f)
+            app->light_intensity = 1.0f; // Cap intensity to 1.0
+    }
+    else {
+        // Decrease light intensity
+        app->light_intensity -= 0.1f;
+        if (app->light_intensity < 0.0f)
+            app->light_intensity = 0.0f; // Cap intensity to 0.0
+    }
+}
+
+
 void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));

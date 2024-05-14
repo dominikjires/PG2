@@ -55,8 +55,8 @@ void App::UpdateModel(float delta_time)
 void App::InitScene()
 {
     // Load shader programs
-    std::filesystem::path VS_path("./resources/shaders/uber.vert");
-    std::filesystem::path FS_path("./resources/shaders/uber.frag");
+    std::filesystem::path VS_path("./resources/shaders/shader.vert");
+    std::filesystem::path FS_path("./resources/shaders/shader.frag");
     my_shader = ShaderProgram(VS_path, FS_path);
 
     glm::vec3 position;

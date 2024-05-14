@@ -91,10 +91,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\uber.frag">
+    <None Include="resources\shaders\shader.frag">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="resources\shaders\uber.vert">
+    <None Include="resources\shaders\shader.vert">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="directional.frag">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="directional.vert">
       <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>

@@ -91,6 +91,8 @@ bool App::Init()
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
         }
 
+        glfwSetScrollCallback(window, scroll_callback);
+
         // Enable OpenGL features
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_LINE_SMOOTH);
@@ -232,8 +234,16 @@ int App::Run(void) {
 
             // Activate shader program and set uniforms
             my_shader.Activate();
+
+
             my_shader.SetUniform("u_mx_view", mx_view);
             my_shader.SetUniform("u_mx_projection", mx_projection);
+
+            // Activate shader program and set uniforms
+            my_shader.Activate();
+            my_shader.SetUniform("u_mx_view", mx_view);
+            my_shader.SetUniform("u_mx_projection", mx_projection);
+            // Ambient light
             my_shader.SetUniform("u_ambient_alpha", 0.0f);
             my_shader.SetUniform("u_diffuse_alpha", 0.7f);
             my_shader.SetUniform("u_camera_position", camera.position);
@@ -243,8 +253,20 @@ int App::Run(void) {
             my_shader.SetUniform("u_material.ambient", glm::vec3(0.4f, 0.2f, 0.05f));
             // Directional light
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.2f));
-            my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f));
+            my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.7f));
             my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.5f));
+            // Reflector
+            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(light_intensity));
+            my_shader.SetUniform("u_spotlight.specular", glm::vec3(0.8f));
+            my_shader.SetUniform("u_spotlight.position", camera.position);
+            my_shader.SetUniform("u_spotlight.direction", camera.front);
+            my_shader.SetUniform("u_spotlight.constant", 1.5f);
+            my_shader.SetUniform("u_spotlight.linear", 0.1f);
+            my_shader.SetUniform("u_spotlight.exponent", 0.05f);
+            my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(20.0f)));
+            my_shader.SetUniform("u_spotlight.cos_outer_cone", glm::cos(glm::radians(27.0f)));
+            my_shader.SetUniform("u_spotlight.on", true);
+
 
 
             // Draw opaque objects
