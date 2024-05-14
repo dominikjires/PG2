@@ -250,7 +250,7 @@ int App::Run(void) {
             // Material
             my_shader.SetUniform("u_material.shininess", 50.0f);
             my_shader.SetUniform("u_material.specular", glm::vec3(0.5f));
-            my_shader.SetUniform("u_material.ambient", glm::vec3(0.4f, 0.2f, 0.05f));
+            my_shader.SetUniform("u_material.ambient", glm::vec3(0.4f));
             // Directional light
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.2f));
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.7f));
