@@ -52,9 +52,6 @@ private:
     glm::vec4 clear_color = glm::vec4(243 / 255.0f, 196 / 255.0f, 128 / 255.0f, 0.0f);
 
     void UpdateProjection();
-
-    void PrintGLInfo();
-
     static void error_callback(int error, const char* description);
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
