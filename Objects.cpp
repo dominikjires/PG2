@@ -15,10 +15,10 @@ Obj* App::CreateModel(const std::string& name, const std::string& obj, const std
 
     // Insert the model into the appropriate scene container based on its opacity
     if (is_opaque) {
-        scene_opaque.insert({ name, model });
+        opaque_scene.insert({ name, model });
     }
     else {
-        scene_transparent.insert({ name, model });
+        transparent_scene.insert({ name, model });
     }
 
     // Add the model to the collisions vector if collision is enabled
@@ -33,13 +33,13 @@ Obj* App::CreateModel(const std::string& name, const std::string& obj, const std
 void App::UpdateModel(float delta_time)
 {
     auto updateRotation = [this](const std::string& name, float angle) {
-        auto it_opaque = scene_opaque.find(name);
-        auto it_transparent = scene_transparent.find(name);
+        auto it_opaque = opaque_scene.find(name);
+        auto it_transparent = transparent_scene.find(name);
 
-        if (it_opaque != scene_opaque.end()) {
+        if (it_opaque != opaque_scene.end()) {
             it_opaque->second->rotation = glm::vec4(0.0f, 1.0f, 0.0f, angle);
         }
-        else if (it_transparent != scene_transparent.end()) {
+        else if (it_transparent != transparent_scene.end()) {
             it_transparent->second->rotation = glm::vec4(0.0f, 1.0f, 0.0f, angle);
         }
         };
@@ -70,20 +70,48 @@ void App::InitScene()
     scale = HEIGHTMAP_SCALE;
     rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     auto obj_heightmap = new Obj("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
-    scene_opaque.insert({ "obj_heightmap", obj_heightmap });
+    opaque_scene.insert({ "obj_heightmap", obj_heightmap });
     _heights = &obj_heightmap->_heights;
 
     // Create boxes
     position = glm::vec3(4.0f, 0.5f, 15.0f);
     scale = 0.2f;
     rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+    // First row
+    position = glm::vec3(4.0f, 0.5f, 15.0f);
     CreateModel("obj_box1", "box.obj", "box.png", true, position, scale, rotation, true, true);
 
-    position = glm::vec3(2.98f, 0.5f, 15.0f);
+    position = glm::vec3(3.0f, 0.5f, 15.0f);
     CreateModel("obj_box2", "box.obj", "box.png", true, position, scale, rotation, true, true);
 
-    position = glm::vec3(3.5f, 1.5f, 15.0f);
+    position = glm::vec3(2.0f, 0.5f, 15.0f);
     CreateModel("obj_box3", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    position = glm::vec3(1.0f, 0.5f, 15.0f);
+    CreateModel("obj_box4", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    // Second row
+    position = glm::vec3(3.5f, 1.5f, 15.0f);
+    CreateModel("obj_box5", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    position = glm::vec3(2.5f, 1.5f, 15.0f);
+    CreateModel("obj_box6", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    position = glm::vec3(1.5f, 1.5f, 15.0f);
+    CreateModel("obj_box7", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    // Third row
+    position = glm::vec3(2.0f, 2.5f, 15.0f);
+    CreateModel("obj_box8", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    position = glm::vec3(3.0f, 2.5f, 15.0f);
+    CreateModel("obj_box9", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+    // Forth row
+    position = glm::vec3(2.5f, 3.5f, 15.0f);
+    CreateModel("obj_box10", "box.obj", "box.png", true, position, scale, rotation, true, true);
+
+
 
     // Create spheres in a circular pattern
     scale = 0.6f;
@@ -110,7 +138,7 @@ void App::InitScene()
     float initialScale = 0.1f;
     glm::vec4 initialRotation(0.0f, 1.0f, 0.0f, 0.0f);
 
-    for (int i = 0; i < PROJECTILES_N; ++i) {
+    for (int i = 0; i < PROJECTILES_COUNT; ++i) {
         std::string projectileName = "obj_projectile_" + std::to_string(i);
 
         auto projectileModel = CreateModel(projectileName, "sphere_tri_vnt.obj", "ball.jpg", true,
@@ -120,7 +148,7 @@ void App::InitScene()
     }
 
     // Populate transparent scene pairs for rendering
-    for (auto& pair : scene_transparent) {
-        scene_transparent_pairs.push_back(&pair);
+    for (auto& pair : transparent_scene) {
+        transparent_scene_pairs.push_back(&pair);
     }
 }

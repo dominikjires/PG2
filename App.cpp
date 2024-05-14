@@ -52,8 +52,8 @@ bool App::Init()
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // Get primary monitor and video mode
-        monitor = glfwGetPrimaryMonitor();
-        mode = glfwGetVideoMode(monitor);
+        primary_monitor = glfwGetPrimaryMonitor();
+        video_mode = glfwGetVideoMode(primary_monitor);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -63,7 +63,7 @@ bool App::Init()
 
         // Enable Vsync
         glfwSwapInterval(1);
-        is_vsync_on = true;
+        vsync_enabled = true;
 
         // Initialize GLEW
         GLenum err = glewInit();
@@ -189,7 +189,7 @@ int App::Run(void) {
             }
 
             // Handle mouselook
-            if (is_mouselook_on) {
+            if (mouselook_enabled) {
                 glfwGetCursorPos(window, &cursor_x, &cursor_y);
                 camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x),
                     static_cast<GLfloat>(window_height / 2.0 - cursor_y));
@@ -270,7 +270,7 @@ int App::Run(void) {
 
 
             // Draw opaque objects
-            for (auto& [key, value] : scene_opaque) {
+            for (auto& [key, value] : opaque_scene) {
                 value->Draw(my_shader);
             }
 
@@ -280,17 +280,17 @@ int App::Run(void) {
             glDepthMask(GL_FALSE);
 
             // Sort transparent objects
-            for (auto& transparent_pair : scene_transparent_pairs) {
-                transparent_pair->second->_distance_from_camera = glm::length(camera.position - transparent_pair->second->position);
+            for (auto& transparent_pair : transparent_scene_pairs) {
+                transparent_pair->second->distance_from_camera = glm::length(camera.position - transparent_pair->second->position);
             }
 
-            std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(),
+            std::sort(transparent_scene_pairs.begin(), transparent_scene_pairs.end(),
                 [](std::pair<const std::string, Obj*>*& a, std::pair<const std::string, Obj*>*& b) {
-                    return a->second->_distance_from_camera > b->second->_distance_from_camera;
+                    return a->second->distance_from_camera > b->second->distance_from_camera;
                 });
 
             // Draw transparent objects
-            for (auto& transparent_pair : scene_transparent_pairs) {
+            for (auto& transparent_pair : transparent_scene_pairs) {
                 transparent_pair->second->Draw(my_shader);
             }
 

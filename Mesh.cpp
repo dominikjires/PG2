@@ -1,4 +1,3 @@
-// NESAHAT !!!
 #include <iostream>
 
 #include "ShaderProgram.hpp"

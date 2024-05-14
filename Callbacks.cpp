@@ -19,14 +19,14 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 
         case GLFW_KEY_RIGHT_ALT:
             // Toggle fullscreen mode
-            app->is_fullscreen_on = !app->is_fullscreen_on;
-            if (app->is_fullscreen_on) {
+            app->fullscreen_enabled = !app->fullscreen_enabled;
+            if (app->fullscreen_enabled) {
                 // Store window position and size before going fullscreen
                 glfwGetWindowPos(window, &app->window_xcor, &app->window_ycor);
                 glfwGetWindowSize(window, &app->window_width_return_from_fullscreen, &app->window_height_return_from_fullscreen);
                 if (app->window_height_return_from_fullscreen == 0) app->window_height_return_from_fullscreen++;
                 // Switch to fullscreen mode
-                glfwSetWindowMonitor(window, app->monitor, 0, 0, app->mode->width, app->mode->height, app->mode->refreshRate);
+                glfwSetWindowMonitor(window, app->primary_monitor, 0, 0, app->video_mode->width, app->video_mode->height, app->video_mode->refreshRate);
             }
             else {
                 // Restore window position and size after exiting fullscreen
@@ -36,9 +36,9 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 
         case GLFW_KEY_V:
             // Toggle VSync and print its status
-            app->is_vsync_on = !app->is_vsync_on;
-            glfwSwapInterval(app->is_vsync_on);
-            std::cout << "VSync: " << app->is_vsync_on << "\n";
+            app->vsync_enabled = !app->vsync_enabled;
+            glfwSwapInterval(app->vsync_enabled);
+            std::cout << "VSync: " << app->vsync_enabled << "\n";
             break;
         }
     }
@@ -56,7 +56,7 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
 {
     if (auto* this_inst = static_cast<App*>(glfwGetWindowUserPointer(window))) {
         // Variables for better readability
-        bool& is_mouselook_on = this_inst->is_mouselook_on;
+        bool& is_mouselook_on = this_inst->mouselook_enabled;
         const int cursor_disabled_mode = GLFW_CURSOR_DISABLED;
 
         // Perform action based on mouse button press

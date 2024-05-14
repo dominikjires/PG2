@@ -1,4 +1,3 @@
-// NEŠAHAT !!!
 #ifndef __gl_err_callback_h__
 #define __gl_err_callback_h__
 

@@ -1,4 +1,3 @@
-// NECHAT JAK JE
 #pragma once
 #include <glm/glm.hpp>
 #include <irrKlang/irrKlang.h>

@@ -1,4 +1,3 @@
-// NECHAT JAK JE
 #include <iostream>
 
 #include "Audio.hpp"

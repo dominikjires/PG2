@@ -10,16 +10,16 @@ Obj::Obj(std::string name, const std::filesystem::path& path_main, const std::fi
     name(std::move(name)),
     position(position),
     scale(scale),
-    init_rotation(init_rotation),
+    initial_rotation(init_rotation),
     use_aabb(use_aabb)
 {
     if (!is_height_map)
         LoadObj(path_main);
     else
-        HeightMap(path_main);
+        LoadHeightMap(path_main);
 
     GLuint texture_id = textureInit(path_tex.string().c_str());
-    mesh = Mesh(GL_TRIANGLES, out_vertices, out_uvs, texture_id);
+    mesh = Mesh(GL_TRIANGLES, vertices, uv_coords, texture_id);
 }
 
 
@@ -31,8 +31,8 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
     std::vector<glm::vec2> temp_uvs;
     std::vector<glm::vec3> temp_normals;
 
-    out_vertices.clear();
-    out_uvs.clear();
+    vertices.clear();
+    uv_coords.clear();
 
     std::string first_two_chars, first_three_chars;
     glm::vec2 uv;
@@ -184,8 +184,8 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
         vertex.position = vertices_direct[u];
         if (u < n_direct_uvs) vertex.tex_coords = texture_coordinates_direct[u];
         if (u < n_direct_normals) vertex.normal = vertex_normals_direct[u];
-        out_vertices.push_back(vertex);
-        out_uvs.push_back(u);
+        vertices.push_back(vertex);
+        uv_coords.push_back(u);
     }
 
     // Print loaded file name
@@ -195,32 +195,32 @@ void Obj::LoadObj(const std::filesystem::path& file_name)
 void Obj::Draw(ShaderProgram& shader)
 {
     // Initialize model matrix as identity matrix
-    mx_model = glm::mat4(1.0f);
+    model_matrix = glm::mat4(1.0f);
 
     // Apply translation
-    mx_model = glm::translate(mx_model, position);
+    model_matrix = glm::translate(model_matrix, position);
 
     // Apply scaling
-    mx_model = glm::scale(mx_model, glm::vec3(scale));
+    model_matrix = glm::scale(model_matrix, glm::vec3(scale));
 
     // Initialize rotation axis from initial rotation
-    glm::vec3 init_rotation_axes(init_rotation);
+    glm::vec3 init_rotation_axes(initial_rotation);
 
     // Apply initial rotation
-    mx_model = glm::rotate(mx_model, glm::radians(init_rotation.w), init_rotation_axes);
+    model_matrix = glm::rotate(model_matrix, glm::radians(initial_rotation.w), init_rotation_axes);
 
     // Apply current rotation
     glm::vec3 rotation_axes(rotation);
-    mx_model = glm::rotate(mx_model, glm::radians(rotation.w), rotation_axes);
+    model_matrix = glm::rotate(model_matrix, glm::radians(rotation.w), rotation_axes);
 
     // Draw the object using the current model matrix
-    mesh.Draw(shader, mx_model);
+    mesh.Draw(shader, model_matrix);
 }
 
-void Obj::HeightMap(const std::filesystem::path& file_name)
+void Obj::LoadHeightMap(const std::filesystem::path& file_name)
 {
-    out_vertices.clear();
-    out_uvs.clear();
+    vertices.clear();
+    uv_coords.clear();
     cv::Mat hmap = cv::imread(file_name.u8string(), cv::IMREAD_GRAYSCALE);
     const unsigned int mesh_step_size = 5;
     glm::vec3 a{};
@@ -286,14 +286,14 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
             glm::vec3 avgNormal = (normal1 + normal2) * 0.5f; // Multiplication is marginally faster than division
 
             // add vertices and texture coordinates to mesh
-            out_vertices.emplace_back(Vertex{ p0, -avgNormal, tc0 });
-            out_vertices.emplace_back(Vertex{ p1, -avgNormal, tc1 });
-            out_vertices.emplace_back(Vertex{ p2, -avgNormal, tc2 });
-            out_vertices.emplace_back(Vertex{ p3, -avgNormal, tc3 });
+            vertices.emplace_back(Vertex{ p0, -avgNormal, tc0 });
+            vertices.emplace_back(Vertex{ p1, -avgNormal, tc1 });
+            vertices.emplace_back(Vertex{ p2, -avgNormal, tc2 });
+            vertices.emplace_back(Vertex{ p3, -avgNormal, tc3 });
 
             // update indices
             indices_counter += 4;
-            out_uvs.insert(out_uvs.end(), { indices_counter - 4, indices_counter - 2, indices_counter - 3,
+            uv_coords.insert(uv_coords.end(), { indices_counter - 4, indices_counter - 2, indices_counter - 3,
                                             indices_counter - 4, indices_counter - 1, indices_counter - 2 });
 
             // average normals
@@ -310,7 +310,7 @@ void Obj::HeightMap(const std::filesystem::path& file_name)
     }
 
     // averaging for normals, 2nd iteration
-    for (auto& vertex : out_vertices) {
+    for (auto& vertex : vertices) {
         // Calculate the index pair for the normal sum lookup
         auto pair = std::make_pair(static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z));
 
@@ -334,7 +334,7 @@ glm::vec2 Obj::HeightMap_GetSubtex(const float height)
         return glm::vec2(1.0f / 16, 1.0f / 16);
 }
 
-bool Obj::Collision_CheckPoint(glm::vec3 point) const
+bool Obj::CheckCollisionWithPoint(glm::vec3 point) const
 {
     // Bounding sphere
     if (!use_aabb) {

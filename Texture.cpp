@@ -1,4 +1,3 @@
-// NEŠAHAT!!!
 #include <opencv2\opencv.hpp>
 #include "texture.hpp"
 

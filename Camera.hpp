@@ -1,4 +1,3 @@
-// NEŠAHAT AŽ NA AUDIO
 #pragma once
 
 #include <GL/glew.h>
@@ -21,12 +20,11 @@ public:
     GLfloat roll = 0.0f;
 
     // Player options
-    const GLfloat movement_speed_normal = 1.0f;
-    const GLfloat movement_speed_sprint = 5.0f;
+    const GLfloat movementSpeed = 1.0f;
+    const GLfloat movementSpeedSprint = 5.0f;
 
     // Mouse options
-    const GLfloat mouse_sensitivity_horizontal = 0.25f;
-    const GLfloat mouse_sensitivity_vertical = 0.25f;
+    const GLfloat mouseSensitivity = 0.25f;
 
     Camera(glm::vec3 position);
     glm::mat4 GetViewMatrix();

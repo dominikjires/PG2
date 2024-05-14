@@ -1,4 +1,3 @@
-// NEŠAHAT
 #include <iostream>
 
 #include <glm/ext/matrix_transform.hpp>
@@ -53,9 +52,9 @@ glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
     }
 
     // Determine movement speed based on sprinting state
-    float movement_speed = movement_speed_normal;
+    float movement_speed = movementSpeed;
     if (sprint) {
-        movement_speed = movement_speed_sprint;
+        movement_speed = movementSpeedSprint;
     }
 
     // If no movement input, return zero vector
@@ -69,8 +68,8 @@ glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
 
 
 void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch) {
-    xoffset *= this->mouse_sensitivity_horizontal;
-    yoffset *= this->mouse_sensitivity_vertical;
+    xoffset *= this->mouseSensitivity;
+    yoffset *= this->mouseSensitivity;
 
     this->yaw -= xoffset;
     this->pitch += yoffset;
